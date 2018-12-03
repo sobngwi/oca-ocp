@@ -14,9 +14,11 @@ import static org.mockito.Mockito.mock;
 
 public class AbstractcarServiceTest {
 
+    protected static List<Car> concurentCarsList;
     protected static List<Car> cars;
     protected static CarService carServiceMock;
     protected static CarService carService;
+
 
     @Before
     public void setUp() throws Exception {
@@ -26,15 +28,17 @@ public class AbstractcarServiceTest {
 
     @BeforeClass
     public static  void init(){
-        cars = Collections.unmodifiableList(Arrays.asList(
+        cars =
+        Arrays.asList(
                 Car.withGasColorPassengers(8,"Black","Alain", "Rudy", "Anne-Gaelle"),
                 Car.withGasColorPassengers(5,"White", "Line", "Farel", "Kassyle", "Aurel", "Merveille"),
                 Car.withGasColorPassengers(7, "Black", "Bertin", "Virginie", "Marc-Antony"),
                 Car.withGasColorPassengers(4, "White", "Patricia", "Tata Henriette", "Adriel", "Bebe Massi"),
                 Car.withGasColorPassengers(4, "Blue", "Nicole" ),
                 Car.withGasColorPassengersAndTrunk(10, "Red", "Totue","Malika", "Chiara")
-        ));
-
+        );
+        concurentCarsList = Collections.unmodifiableList(cars);
+        
         carServiceMock = mock(CarService.class);
         doCallRealMethod().when(carServiceMock).showAll(anyCollection());
         doCallRealMethod().when(carServiceMock).getRedCars(anyCollection());

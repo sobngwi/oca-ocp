@@ -39,6 +39,7 @@ public class Lists extends AbstractCollections {
         strings.clear();
         strings = Arrays.asList("A","b","Z","z","0","1","9","X");
 
+
         strings.sort(null); // java.lang.Comparable is the natural order to sort
 
         assertThat(strings.get(0), equalTo("0"));
