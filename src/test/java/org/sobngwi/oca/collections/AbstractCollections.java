@@ -1,11 +1,15 @@
 package org.sobngwi.oca.collections;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class AbstractCollections {
 
@@ -44,4 +48,6 @@ public class AbstractCollections {
     protected void addObject(List strings) {
         strings.add(LocalDateTime.now());
     }
+
+
 }

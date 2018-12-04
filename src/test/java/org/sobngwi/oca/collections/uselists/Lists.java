@@ -1,5 +1,6 @@
 package org.sobngwi.oca.collections.uselists;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.sobngwi.oca.collections.AbstractCollections;
 
@@ -94,5 +95,45 @@ public class Lists extends AbstractCollections {
 
     }
 
+    @Test
+    public void dequePushIsLIFO() {
+        ArrayDeque<String> greetings = new ArrayDeque<String>();
+        greetings.push("hello");
+        greetings.push("hi");
+        greetings.push("ola");
 
+        assertThat(greetings.getFirst(), equalTo("ola"));
+        assertThat(greetings.getLast(), equalTo("hello"));
+    }
+
+    @Test
+    public void dequeOfferIsFIFO() {
+        ArrayDeque<String> greetings = new ArrayDeque<String>();
+        greetings.offer("hello");
+        greetings.offer("hi");
+        greetings.offer("ola");
+
+        assertThat(greetings.getFirst(), equalTo("hello"));
+        assertThat(greetings.getLast(), equalTo("ola"));
+    }
+
+    @Test
+    public void bynarySearchNotOKOnScendingSortedCollections() {
+
+        Comparator<Integer> c = (o1, o2) -> o2 - o1; // descending
+        List<Integer> list = Arrays.asList(5, 4, 7, 1);
+        Collections.sort(list, c);
+        Assert.assertThat(Collections.binarySearch(list, 4), equalTo(-1));
+        Assert.assertThat(Collections.binarySearch(list, 1), equalTo(-1));
+    }
+
+    @Test
+    public void bynarySearchWorksOnlyOnScendingSortedCollections() {
+
+        Comparator<Integer> c = (o1, o2) -> o1 - o2; // ascending
+        List<Integer> list = Arrays.asList(5, 4, 7, 1);
+        Collections.sort(list, c);
+        Assert.assertThat(Collections.binarySearch(list, 4), equalTo(1));
+        Assert.assertThat(Collections.binarySearch(list, 1), equalTo(0));
+    }
 }
