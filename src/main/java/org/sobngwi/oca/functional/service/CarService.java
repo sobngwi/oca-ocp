@@ -2,10 +2,7 @@ package org.sobngwi.oca.functional.service;
 
 import org.sobngwi.oca.functional.model.Car;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -28,19 +25,41 @@ public class CarService {
         }
     }
 
-    interface CarCriterion {
-        boolean test(Car car);
+    public interface Criterion<T> {
+        boolean test(T t);
+
+        Criterion<Car> RED_CAR_CRITERION = c ->  c.getColor().equals("Red");
+        Criterion<Car> GAZ_LEVEL_CAR_CRITERION = c -> c.getGasLevel() >=7;
+        Criterion<Car> RED_CAR_CRITERION_AND_GAZ_LEVEL_CAR_CRITERION =
+                and(RED_CAR_CRITERION, GAZ_LEVEL_CAR_CRITERION );
+        Criterion<Car> GAZ_LEVEL_CAR_CRITERION_UNDER7 = negate(GAZ_LEVEL_CAR_CRITERION);
+        Criterion<Car> COLORIZED_CRITERION = getColorCriterion("Black");
+
+        static Criterion<Car> negate(Criterion<Car> criterion) {
+            return c -> ! criterion.test(c) ;
+        }
+
+        static  Criterion<Car> and(Criterion<Car> first, Criterion<Car> second) {
+            return c -> first.test(c) && second.test(c) ;
+        }
     }
 
-    class RedCarCriterion implements CarCriterion {
+  /*  public static final Criterion<Car> RED_CAR_CRITERION = c ->  c.getColor().equals("Red");
+    public static final Criterion<Car> GAZ_LEVEL_CAR_CRITERION = c -> c.getGasLevel() >=7;
+    public static final Criterion<Car> RED_CAR_CRITERION_AND_GAZ_LEVEL_CAR_CRITERION =
+            and(RED_CAR_CRITERION, GAZ_LEVEL_CAR_CRITERION );
+    public static final Criterion<Car> GAZ_LEVEL_CAR_CRITERION_UNDER7 = negate(GAZ_LEVEL_CAR_CRITERION);
+*/
+
+    /*class RedCarCriterion implements Criterion<Car> {
 
         @Override
         public boolean test(Car c) {
             return c.getColor().equals("Red");
         }
-    }
+    }*/
 
-    class GasLevCarCriterion implements CarCriterion {
+    /*private class GasLevCarCriterion implements Criterion<Car> {
         private final int threshold;
 
         public GasLevCarCriterion(int threshold) {
@@ -51,9 +70,17 @@ public class CarService {
         public boolean test(Car c) {
             return c.getGasLevel() >= threshold;
         }
+    }*/
+
+    /* function that create a function as return value ...*/
+     private static  Criterion<Car> getColorCriterion(final String... colors ){
+        Set<String> colorSet = new HashSet<>(Arrays.asList(colors));
+
+        return c -> colorSet.contains(c.getColor());
     }
 
-    public static List<Car> getRedCars(Iterable<Car> input) {
+
+    public  List<Car> getRedCars(Iterable<Car> input) {
 
         List<Car> output = new ArrayList<>();
 
@@ -64,7 +91,7 @@ public class CarService {
         return Collections.unmodifiableList(output);
     }
 
-    public static List<Car> getCarsByCriterion(Iterable<Car> input, CarCriterion criterion) {
+    public List<Car> getCarsByCriterion(Iterable<Car> input, Criterion criterion) {
 
         List<Car> output = new ArrayList<>();
 
@@ -75,7 +102,7 @@ public class CarService {
         return Collections.unmodifiableList(output);
     }
 
-    public static List<Car> getCarsByColor(Iterable<Car> input, String color) {
+    public  List<Car> getCarsByColor(Iterable<Car> input, String color) {
 
         List<Car> output = new ArrayList<>();
 
@@ -86,7 +113,7 @@ public class CarService {
         return Collections.unmodifiableList(output);
     }
 
-    public static List<Car> getCarsByGasLevel(Iterable<Car> input, int gasLevel) {
+    public  List<Car> getCarsByGasLevel(Iterable<Car> input, int gasLevel) {
 
         List<Car> output = new ArrayList<>();
 

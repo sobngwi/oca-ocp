@@ -108,7 +108,7 @@ public class Lists extends AbstractCollections {
 
     @Test
     public void dequeOfferIsFIFO() {
-        ArrayDeque<String> greetings = new ArrayDeque<String>();
+        ArrayDeque<String> greetings = new ArrayDeque<>();
         greetings.offer("hello");
         greetings.offer("hi");
         greetings.offer("ola");
