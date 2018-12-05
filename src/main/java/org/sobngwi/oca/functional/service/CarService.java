@@ -44,33 +44,6 @@ public class CarService {
         }
     }
 
-  /*  public static final Criterion<Car> RED_CAR_CRITERION = c ->  c.getColor().equals("Red");
-    public static final Criterion<Car> GAZ_LEVEL_CAR_CRITERION = c -> c.getGasLevel() >=7;
-    public static final Criterion<Car> RED_CAR_CRITERION_AND_GAZ_LEVEL_CAR_CRITERION =
-            and(RED_CAR_CRITERION, GAZ_LEVEL_CAR_CRITERION );
-    public static final Criterion<Car> GAZ_LEVEL_CAR_CRITERION_UNDER7 = negate(GAZ_LEVEL_CAR_CRITERION);
-*/
-
-    /*class RedCarCriterion implements Criterion<Car> {
-
-        @Override
-        public boolean test(Car c) {
-            return c.getColor().equals("Red");
-        }
-    }*/
-
-    /*private class GasLevCarCriterion implements Criterion<Car> {
-        private final int threshold;
-
-        public GasLevCarCriterion(int threshold) {
-            this.threshold = threshold;
-        }
-
-        @Override
-        public boolean test(Car c) {
-            return c.getGasLevel() >= threshold;
-        }
-    }*/
 
     /* function that create a function as return value ...*/
      private static  Criterion<Car> getColorCriterion(final String... colors ){

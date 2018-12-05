@@ -3,10 +3,7 @@ package org.sobngwi.oca.dates;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Period;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
@@ -208,4 +205,40 @@ public class LocalDateTest {
                 containsString("2018") ));
     }
 
+    @Test
+    public void localDates() {
+        LocalDate twentyFivzeFebuary = LocalDate.of(2014, Month.JANUARY, 28);
+        twentyFivzeFebuary = twentyFivzeFebuary.plusMonths(1);
+        assertThat("java is no smart enougth to contextualisaize the computation",
+                twentyFivzeFebuary.getMonth(), equalTo(Month.FEBRUARY ));
+
+        twentyFivzeFebuary = twentyFivzeFebuary.minusDays(1);
+
+        twentyFivzeFebuary = twentyFivzeFebuary.plusWeeks(1);
+        assertThat("java is no smart enougth to contextualisaize the computation",
+                twentyFivzeFebuary.getMonth(), equalTo(Month.MARCH));
+        Period p = Period.ofYears(1);
+
+
+        assertThat(p.ofWeeks(1).toString(), not (containsString("Y")));
+
+
+    }
+
+    @Test ( expected = UnsupportedTemporalTypeException.class)
+    public void timePlusPeriodThrowsException() {
+        Period p = Period.ofYears(1);
+        LocalTime time = LocalTime.now();
+        time.plus(p);
+
+    }
+
+    @Test ( expected = UnsupportedTemporalTypeException.class)
+    public void durationPeriodOnDatePlusThrowsException() {
+        Period p = Period.ofDays(1);
+        Duration day = Duration.ofDays(1);
+
+        LocalDate.now().plus(day);
+
+    }
 }

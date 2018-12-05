@@ -21,7 +21,7 @@ public class AbstractcarServiceTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         carService = new CarService();
     }
