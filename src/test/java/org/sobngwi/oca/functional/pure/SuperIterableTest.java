@@ -6,10 +6,11 @@ import org.junit.Test;
 import org.sobngwi.oca.functional.model.Car;
 import org.sobngwi.oca.functional.service.AbstractcarServiceTest;
 
-import java.util.Arrays;
+import java.util.*;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
@@ -77,6 +78,15 @@ public class SuperIterableTest extends AbstractcarServiceTest {
     }
 
     @Test
+    public void mapAddGazLevel() {
+
+        final int gazToAdd = 100;
+        SuperIterable<Car> result = carsSuperIterable.map(car -> car.addGazLevel(gazToAdd));
+        carsSuperIterable.forEvery(
+                car -> assertThat(result.toString(), containsString((car.getGasLevel() + gazToAdd) + "")));
+    }
+
+    @Test
     public void filterAndMap() {
         SuperIterable<String> result = strings.filter(s -> Character.isUpperCase(s.charAt(0)))
                 .map(s -> s.toUpperCase());
@@ -96,4 +106,67 @@ public class SuperIterableTest extends AbstractcarServiceTest {
                 containsString("Henriette"), containsString("Adriel")));
     }
 
+    @Test
+    public void optOfTrunktestWithoutTrunkContent() {
+        Optional<Map<String, Car>> ownerOpt = Optional.of(owner);
+
+        assertThat(
+                ownerOpt.map(v -> v.get("Alain"))
+                        .map(x -> x.getTrunkContents())
+                        .isPresent(), equalTo(false));
+        assertThat(
+                ownerOpt.map(v -> v.get("Wrong Owner"))
+                        .map(x -> x.getTrunkContents())
+                        .isPresent(), equalTo(false));
+        assertThat(
+                ownerOpt.map(v -> v.get("Wrong Owner"))
+                        .map(x -> x.getTrunkContentsOpt())
+                        .isPresent(), equalTo(false));
+    }
+
+
+    @Test
+    public void optOfTrunktestWithTrunkContent() {
+        Optional<Map<String, Car>> ownerOpt = Optional.of(owner);
+
+        assertThat(
+                ownerOpt.map(v -> v.get("Totue"))
+                        .map(x -> x.getTrunkContents())
+                        .isPresent(), equalTo(true));
+        assertThat(
+                ownerOpt.map(v -> v.get("Totue"))
+                        .flatMap(x -> x.getTrunkContentsOpt())
+                        .isPresent(), equalTo(true));
+
+        assertThat(
+                ownerOpt.map(v -> v.get("Totue"))
+                        .flatMap(x -> x.getTrunkContentsOpt())
+                        .get().toString(),
+                containsString("whisky Jack Daniel"));
+        assertThat(
+                ownerOpt.map(v -> v.get("Totue"))
+                        .flatMap(x -> x.getTrunkContentsOpt())
+                        .get().size(),
+                equalTo(3));
+    }
+
+    @Test
+    public void optionalOnFlatMaps() {
+        ownerMultipleCars.merge("Totue",Arrays.asList(lineCar),
+                (s,t) -> Arrays.asList(flaubertCar, flaubertCar.addGazLevel(100)));
+
+        assertThat(ownerMultipleCars.get("Totue")
+                .stream()
+                //.map( c -> c.getTrunkContents())
+
+                //.flatMap(List::stream)
+                .flatMap(l -> l.getTrunkContents().stream())
+                .parallel()
+                //.filter(not(String::equals))
+                //.map(Car::getPassengers getPassengers)
+               // filter ( not empty)
+                .count(), equalTo(6L));
+
+
+    }
 }

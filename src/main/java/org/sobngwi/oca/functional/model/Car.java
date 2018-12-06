@@ -1,9 +1,6 @@
 package org.sobngwi.oca.functional.model;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Car {
     private int gasLevel;
@@ -35,7 +32,10 @@ public class Car {
     public int getGasLevel() {
         return gasLevel;
     }
+    public Car addGazLevel (  int gazLevelToAdd){
+        return new Car(this.gasLevel + gazLevelToAdd, this.color, this.passengers, trunkContents);
 
+    }
 
     public String getColor() {
         return color;
@@ -46,8 +46,15 @@ public class Car {
     }
 
     public List<String> getTrunkContents() {
-        return trunkContents == null ? Collections.unmodifiableList(Arrays.asList()) : trunkContents ;
+        //return trunkContents == null ? Collections.unmodifiableList(Arrays.asList()) : trunkContents ;
+        return  trunkContents ;
     }
+
+    public Optional <List<String>> getTrunkContentsOpt() {
+        //return trunkContents == null ? Collections.unmodifiableList(Arrays.asList()) : trunkContents ;
+        return  Optional.ofNullable(trunkContents) ;
+    }
+
 
     @Override
     public String toString() {

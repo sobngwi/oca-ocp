@@ -119,4 +119,11 @@ public class CarServiceTest extends AbstractcarServiceTest {
         assertThat(result.toString(), containsString("Patricia"));
         assertThat(result.toString(), containsString("Nicole"));
     }
+
+    @Test
+    public void shouldRenderTheOwner() {
+
+        //owner.forEach((k, v) -> System.out.printf(" Key : %s ,  VALUE : %s", k, v));
+        owner.forEach((k, v) -> assertThat(k, equalTo(owner.get(k).getPassengers().get(0))));
+    }
 }

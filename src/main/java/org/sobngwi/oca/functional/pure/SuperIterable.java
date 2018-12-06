@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public class SuperIterable<E> implements Iterable<E> {
 
-    private Iterable<E> self;
+    private final Iterable<E> self;
 
     public SuperIterable(Iterable<E> self) {
         this.self = self;
@@ -57,7 +57,7 @@ public class SuperIterable<E> implements Iterable<E> {
 
 
     public void forEvery(Consumer<E> cons) {
-        for (E e : self)
+        for (E e : self )
             cons.accept(e);
     }
 

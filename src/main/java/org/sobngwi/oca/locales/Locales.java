@@ -1,4 +1,4 @@
-package org.sobngwi.oca.locale;
+package org.sobngwi.oca.locales;
 
 import java.util.Locale;
 
