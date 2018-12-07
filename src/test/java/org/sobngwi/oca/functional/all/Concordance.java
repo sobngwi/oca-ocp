@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -54,12 +55,11 @@ public class Concordance {
                 //.flatMap(Files::lines)
                 .map(Paths::get)
                 //.map(Concordance::lines)
-                .map(wrapException( p -> Files.lines(p)))
-                .peek(o -> {
-                    if (!o.isPresent()) System.err.println("Bad file !");
-                })
-                .filter(Optional::isPresent)
-                .flatMap(Optional::get)
+                //.map(wrapException(Files::lines))
+                .map(Either.wrap(Files::lines))
+                .peek(either -> either.handle(System.err::println) )
+                .filter( either -> either.success())
+                .flatMap(Either::getValue)
                 .flatMap(WORD_BREAK::splitAsStream)
                 .filter(isEmpty.negate())
                 .map(String::toLowerCase)
@@ -81,11 +81,11 @@ public class Concordance {
         }
     }
 
-    private interface exceptionFunction<E, F> {
+    private interface ExceptionFunction<E, F> {
         F apply(E e) throws Exception;
     }
 
-    private static <E, F> Function<E, Optional<F>> wrapException(exceptionFunction<E, F> op) {
+     static <E, F> Function<E, Optional<F>> wrapException(ExceptionFunction<E, F> op) {
 
         return e -> {
             try {
@@ -95,5 +95,60 @@ public class Concordance {
                 return Optional.empty();
             }
         };
+    }
+
+    private static  class  Either<E>{
+        private E value ;
+        private Throwable cause;
+
+        private Either() {
+        }
+
+        private static  <E> Either<E> success( E value){
+            Either<E> self = new Either<>();
+            self.value = value;
+            return self;
+        }
+
+        private  static <E> Either<E> failure( Throwable cause){
+            Either<E> self = new Either<>();
+            self.cause = cause;
+            return self;
+        }
+
+        public boolean success(){
+            return value !=null ;
+        }
+        public boolean failed(){
+            return cause !=null ;
+        }
+
+        public E getValue(){
+            return value;
+        }
+        public Throwable getCause(){
+            return cause;
+        }
+
+        public void use(Consumer<E> consumer){
+            if ( value != null ){
+                consumer.accept(value);
+            }
+        }
+
+        void handle(Consumer<Throwable> consumer){
+            if ( cause != null )
+                consumer.accept(cause);
+        }
+
+        public static <E,F> Function<E, Either<F>> wrap(ExceptionFunction<E, F> op){
+            return e -> {
+                try {
+                    return Either.success(op.apply(e));
+                }catch ( Throwable t ){
+                    return Either.failure(t);
+                }
+            };
+        }
     }
 }
