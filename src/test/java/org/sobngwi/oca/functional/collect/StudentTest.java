@@ -1,5 +1,7 @@
 package org.sobngwi.oca.functional.collect;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -7,6 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,8 +25,14 @@ public class StudentTest {
     static Logger log = Logger.getLogger(StudentTest.class.getName());
 
     private static List<Student> school;
+    private Map<String, List<Student>> resultTable;
 
 
+    @Before
+    public void setUp(){
+        resultTable = school.stream()
+                .collect(Collectors.groupingBy(student -> student.getGradeLetters()));
+    }
     @BeforeClass
     public static void globalSetUp() {
         school = Arrays.asList(
@@ -50,16 +59,14 @@ public class StudentTest {
     @Test
     public void mapGroupingBy() {
 
-        Map<String, List<Student>> resultTable = school.stream()
-                .collect(Collectors.groupingBy(student -> student.getGradeLetters()));
+
 
         assertThat(resultTable.keySet().size(), equalTo(6));
     }
 
     @Test
     public void mapGroupinByFlooring() {
-        Map<String, List<Student>> resultTable = school.stream()
-                .collect(Collectors.groupingBy(student -> student.getGradeLetters()));
+
 
         assertThat(resultTable.get("A").toString(), containsString("Locke"));
         assertThat(resultTable.get("B").toString(), containsString("Alain Narc"));
@@ -104,7 +111,36 @@ public class StudentTest {
 
 
     @Test
-    public void homeWork() {
+    public void homeWorkCollectingAndThen() {
 
+        Comparator<Map.Entry<String, Student>> valueOrderd = comparingByKey();
+        String maxGraduate = school.stream().collect(
+                Collectors.collectingAndThen(
+                        Collectors.maxBy(Comparator.comparing(Student::getScore)),
+                        (student)-> student.isPresent()? student.get().getName():"none"));
+        assertThat(maxGraduate, CoreMatchers.equalTo("Weatherwax"));
+
+        String minGraduate = school.stream().collect(
+                Collectors.collectingAndThen(
+                        Collectors.minBy(Comparator.comparing(Student::getScore)),
+                        (student)-> student.isPresent()? student.get().getName():"none"));
+        assertThat(minGraduate, CoreMatchers.equalTo("RinceWind"));
+
+       String result =  school.stream().collect(
+                Collectors.collectingAndThen(
+                        Collectors.groupingBy(s -> s.getGradeLetters()),
+                        s -> s.entrySet()
+                                .stream()
+                                .map(s1 -> s1.getValue()
+                                        .stream()
+                                        .map(Student::getName)
+                                        .reduce("", (s2, s3) -> s2 + " " + s3)
+                                        + " has(ve) Grade " + s1.getKey() + "\n")))
+               .collect(Collectors.joining());
+
+       assertThat(result, containsString("Sheila Weatherwax Valentine Anne Ender Locke has(ve) Grade A"));
+       assertThat(result, containsString("Jim RinceWind has(ve) Grade F"));
+       assertThat(result, containsString("Ridcully has(ve) Grade D"));
+               // .forEach(System.out::println);
     }
 }
