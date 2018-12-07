@@ -9,14 +9,14 @@ public class Avereger {
     private  long count = 0;
 
     public static final  Supplier<Avereger> averegerSupplier = Avereger::new ;//() -> new Avereger();
-    public static final  ObjDoubleConsumer<Avereger>  accumulator = (b, i) -> b.include(i);
-    public static final  BiConsumer<Avereger, Avereger> combiner = ( c1 , c2 ) -> c1.merge(c2);
+    public static final  ObjDoubleConsumer<Avereger>  accumulator = Avereger::include;
+    public static final  BiConsumer<Avereger, Avereger> combiner = Avereger::merge;
 
     public Avereger() {}
 
-    private void include( Double other){
+    private void include( Double doubleValue){
         count += 1 ;
-        sum += other;
+        sum += doubleValue;
     }
 
     private void merge( Avereger other){
