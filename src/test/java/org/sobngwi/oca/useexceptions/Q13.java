@@ -1,6 +1,6 @@
 package org.sobngwi.oca.useexceptions;
 
-import com.sun.jdi.AbsentInformationException;
+
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ public class Q13 {
     static class C extends IOException{
          public  void m() throws C{ }
     }
-    static class D extends AbsentInformationException {
+    static class D extends Throwable  {
         public void m() throws D{}}
 
     public static void main(String[] args) {
