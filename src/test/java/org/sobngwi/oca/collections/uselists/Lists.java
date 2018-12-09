@@ -3,14 +3,16 @@ package org.sobngwi.oca.collections.uselists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sobngwi.oca.collections.AbstractCollections;
+import org.sobngwi.oca.functional.annotation.SelectIterable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class Lists extends AbstractCollections {
 
@@ -137,5 +139,49 @@ public class Lists extends AbstractCollections {
         Collections.sort(list, c);
         Assert.assertThat(Collections.binarySearch(list, 4), equalTo(1));
         Assert.assertThat(Collections.binarySearch(list, 1), equalTo(0));
+    }
+
+    @Test
+    public void selectIfPresent() {
+
+        Map<String, Integer> iqMap =
+                new ConcurrentHashMap<String, Integer>() {
+                    {
+                        put("Larry", 100);
+                        put("Curly", 90);
+                        put("Moe", 110);
+                    }
+                };
+
+        List<String> result = SelectIterable.selectIf(iqMap.keySet(), x -> iqMap.get(x) > 100);
+        assertFalse(result.isEmpty());
+        assertThat(result.size(), equalTo(1));
+        assertThat(result.toString(), containsString("Moe"));
+
+    }
+
+    @Test
+    public void selectIfPresentByStream() {
+
+        Map<String, Integer> iqMap =
+                new ConcurrentHashMap<String, Integer>() {
+                    {
+                        put("Larry", 100);
+                        put("Curly", 90);
+                        put("Moe", 110);
+                    }
+                };
+
+
+
+        List<Integer> result = iqMap.keySet()
+                .stream()
+                .filter(x -> iqMap.get(x) > 100)
+                .map(x -> iqMap.get(x))
+                .collect(Collectors.toList());
+        assertFalse(result.isEmpty());
+        assertThat(result.size(), equalTo(1));
+        assertThat(result.toString(), containsString("110"));
+
     }
 }

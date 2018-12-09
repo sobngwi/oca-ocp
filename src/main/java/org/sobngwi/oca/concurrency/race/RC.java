@@ -15,6 +15,12 @@ public class RC {
         return SynchronizedParallelFactorial.factorial(bigInteger);
     }
 
+    public final static BigInteger getFactorialReduce(BigInteger bigInteger){
+        return ReduceFactorial.factorial(bigInteger);
+    }
+
+
+
     private static class BuggyFactorial {
         /**
          * This class keeps a running total of the factorial and
@@ -79,7 +85,7 @@ public class RC {
             /**
              * The running total of the factorial.
              */
-            BigInteger shareDataAccumulator = BigInteger.ONE;
+            BigInteger mTotal = BigInteger.ONE;
 
             /**
              * Multiply the running total by @a n.  This method is
@@ -87,7 +93,7 @@ public class RC {
              */
             void multiply(BigInteger n) {
                 synchronized (this) {
-                    shareDataAccumulator = shareDataAccumulator.multiply(n);
+                    mTotal = mTotal.multiply(n);
                 }
             }
 
@@ -96,7 +102,7 @@ public class RC {
              */
             BigInteger get() {
                 synchronized (this) {
-                    return shareDataAccumulator;
+                    return mTotal;
                 }
             }
         }
@@ -124,6 +130,16 @@ public class RC {
 
             // Return the total.
             return t.get();
+        }
+    }
+
+    private static class ReduceFactorial {
+        private static BigInteger factorial(BigInteger n) {
+            return LongStream
+                    .rangeClosed(1, n.longValue())
+                    .parallel()
+                    .mapToObj(BigInteger::valueOf)
+                    .reduce(BigInteger.ONE, BigInteger::multiply);
         }
     }
 

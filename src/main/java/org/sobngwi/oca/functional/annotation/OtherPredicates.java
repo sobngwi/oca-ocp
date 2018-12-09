@@ -1,12 +1,15 @@
 package org.sobngwi.oca.functional.annotation;
 
+import java.util.*;
 import java.util.function.Predicate;
 
-@FunctionalInterface
-public interface OtherPredicates <T> extends Predicate<T>  {
+public interface OtherPredicates <E> extends Predicate<E>, Iterable<E> {
 
-    static <T>  Predicate<T> not (Predicate<T> p){
+    static <E>  Predicate<E> not (Predicate<E> p){
         return p.negate();
     }
+
+
+
 
 }

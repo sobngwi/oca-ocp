@@ -63,4 +63,19 @@ public class RCTest {
             }
         }
     }
+
+    @Test
+    public void NoRaceCondition_computeFactorialOKForNumbersOnSynchronizedMethodReduceTerminalOperation() {
+
+        for ( long   count = 1 ; count < 1000 ; count++ ){
+            BigInteger firstValue =  RC.getFactorialReduce(BigInteger.valueOf(count));
+            BigInteger secondValue = RC.getFactorialReduce(BigInteger.valueOf(count));
+            if (  firstValue.compareTo(secondValue) != 0 )
+            {
+                System.out.println(String.format(" Iteration [%d] : firstValue, [%s] != secondValue [%s]", count, firstValue, secondValue));
+                assertThat("firstValue =" + firstValue.toString() + " secondValue=" + secondValue + " .", firstValue, equalTo(secondValue));
+                throw new RuntimeException(String.format("firstValue :[%s] != secondValue [%s]", firstValue, secondValue));
+            }
+        }
+    }
 }
