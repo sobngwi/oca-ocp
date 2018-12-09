@@ -25,14 +25,14 @@ public class RC {
             /**
              * The running total of the factorial.
              */
-            BigInteger mTotal = BigInteger.ONE;
+            BigInteger shareDataAccumulator = BigInteger.ONE;
 
             /**
              * Multiply the running total by @a n.  This method is not
              * synchronized, so it may incur race conditions.
              */
             void multiply(BigInteger n) {
-                mTotal = mTotal.multiply(n);
+                shareDataAccumulator = shareDataAccumulator.multiply(n);
             }
         }
 
@@ -61,7 +61,7 @@ public class RC {
 
             // Return the total, which is also not properly
             // synchronized.
-            return t.mTotal;
+            return t.shareDataAccumulator;
         }
     }
 
@@ -79,7 +79,7 @@ public class RC {
             /**
              * The running total of the factorial.
              */
-            BigInteger mTotal = BigInteger.ONE;
+            BigInteger shareDataAccumulator = BigInteger.ONE;
 
             /**
              * Multiply the running total by @a n.  This method is
@@ -87,7 +87,7 @@ public class RC {
              */
             void multiply(BigInteger n) {
                 synchronized (this) {
-                    mTotal = mTotal.multiply(n);
+                    shareDataAccumulator = shareDataAccumulator.multiply(n);
                 }
             }
 
@@ -96,7 +96,7 @@ public class RC {
              */
             BigInteger get() {
                 synchronized (this) {
-                    return mTotal;
+                    return shareDataAccumulator;
                 }
             }
         }
