@@ -3,7 +3,9 @@ package org.sobngwi.oca.concurrency.race;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -23,7 +25,7 @@ public class RCTest {
              BigInteger synchronised = RC.getSynchronizedParallelFactorial(BigInteger.valueOf(count));
             if (  buggy.compareTo(synchronised) != 0 )
             {
-                log.info(String.format("raceCondition: Iteration [%d] : buggy :[%s] != synchronised [%s]", count, buggy, synchronised));
+                log.finest(String.format("raceCondition: Iteration [%d] : buggy :[%s] != synchronised [%s]", count, buggy, synchronised));
                 assertThat("buggy =" + buggy.toString() + " synchronised=" + synchronised + " .", buggy, not(equalTo(synchronised)));
                 throw new RuntimeException(String.format("buggy :[%s] != synchronised [%s]", buggy, synchronised));
             }
@@ -40,7 +42,7 @@ public class RCTest {
             BigInteger secondValue = RC.getBuggyParalleleFactorial(BigInteger.valueOf(count));
             if (  firstValue.compareTo(secondValue) != 0 )
             {
-                log.info(String.format("raceCondition: Iteration [%d] : firstValue, [%s] != secondValue [%s]", count, firstValue, secondValue));
+                log.finest(String.format("raceCondition: Iteration [%d] : firstValue, [%s] != secondValue [%s]", count, firstValue, secondValue));
                 assertThat("firstValue =" + firstValue.toString() + " secondValue=" + secondValue + " .", firstValue, not(equalTo(secondValue)));
                 throw new RuntimeException(String.format("firstValue :[%s] != secondValue [%s]", firstValue, secondValue));
             }
@@ -77,5 +79,22 @@ public class RCTest {
                 throw new RuntimeException(String.format("firstValue :[%s] != secondValue [%s]", firstValue, secondValue));
             }
         }
+    }
+
+    @Test
+    public void rc_on_non_atomic_variables() {
+        AtomicLong atomicLong = new AtomicLong(0);
+        final long[] longs ={0};
+        IntStream.iterate(1, i->1)
+                .parallel()
+                .limit(10000)
+                .forEach(i -> atomicLong.incrementAndGet());
+        IntStream.iterate(1, i->1)
+                .parallel()
+                .limit(10000)
+                .forEach(i -> ++longs[0]);
+        assertThat(atomicLong.toString(), equalTo("10000"));
+        assertThat(atomicLong.toString(), not(equalTo(longs[0])));
+
     }
 }
