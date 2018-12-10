@@ -1,5 +1,6 @@
 package org.sobngwi.oca.concurrency;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +26,10 @@ public class A {
             }
         };
 
-        
+        Arrays.asList("Alain", "Narcisse")
+                .parallelStream()
+                .parallel()
+                .reduce((c1, c2) -> c1.length() + c2.length() + "");
 
     }
 

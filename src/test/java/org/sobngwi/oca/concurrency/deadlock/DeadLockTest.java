@@ -3,6 +3,10 @@ package org.sobngwi.oca.concurrency.deadlock;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -68,5 +72,28 @@ public class DeadLockTest {
         thread2.join(2000);
         assertThat(true, equalTo(thread1.isAlive()));
         assertThat(true, equalTo(thread1.isAlive()));
+    }
+
+
+    @Test
+    public void noLiveLockThreadAreActive() throws Throwable{
+
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        Future<?> f1 = executorService.submit(() -> {
+            synchronized (lock1){
+                synchronized (lock2){
+                }
+            }
+        });
+
+        Future<?> f2 = executorService.submit(() -> {
+            synchronized (lock2){
+                synchronized (lock1){
+                }
+            }
+        });
+    f1.get();
+    f2.get();
     }
 }

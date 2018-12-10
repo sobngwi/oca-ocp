@@ -1,5 +1,10 @@
 package org.sobngwi.oca.concurrency;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 /**
  * To compile and run from the command-line:
  * javac Deadlock.java
@@ -13,6 +18,41 @@ public class Deadlock {
      * Each thread executes its run() method.
      **/
     public static void main(String args[]) {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        Future<?> f1 = executorService.submit(() -> {
+            synchronized (lock1){
+                try {
+                    Thread.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                synchronized (lock2){
+                    System.out.println("F1");
+                }
+            }
+        });
+
+        Future<?> f2 = executorService.submit(() -> {
+            synchronized (lock2){
+                synchronized (lock1){
+                    System.out.println("F2");
+                }
+            }
+        });
+
+        try {
+            System.out.println(f1.get());
+            System.out.println(f2.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+
         Thread thread1 = new Thread() {
             public void run() {
                 synchronized (lock1) {                                   /** line 2 **/

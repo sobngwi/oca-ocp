@@ -1,20 +1,31 @@
 package org.sobngwi.oca.concurrency.race;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
+import static java.lang.Thread.sleep;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class RCTest {
 
     private static Logger log = Logger.getLogger(RCTest.class.getName());
+    private int sheepCount1;
+    AtomicLong sheepCount2;
+
+    @Before
+    public void setUp(){
+         sheepCount1 = 0 ;
+         sheepCount2= new AtomicLong(0);
+    }
 
     @Test ( expected = RuntimeException.class)
     public void raceCondition_computeFactorialNOkForSmallNumbers() {
@@ -95,6 +106,49 @@ public class RCTest {
                 .forEach(i -> ++longs[0]);
         assertThat(atomicLong.toString(), equalTo("10000"));
         assertThat(atomicLong.toString(), not(equalTo(longs[0])));
+
+    }
+
+
+    @Test
+    public void noRace_ConditionWithThreadPollFixedTo_One() throws  InterruptedException{
+        ExecutorService executorService = null;
+
+        try {
+            executorService = Executors.newFixedThreadPool(1);
+            for ( int i = 1; i< 1000000 ; i ++)
+                executorService.execute(() -> {
+                    sheepCount2.incrementAndGet();
+                    sheepCount1++; });
+            sleep(100);
+
+        }
+        finally {
+            if ( executorService != null) executorService.shutdown();
+        }
+        assertTrue(sheepCount1 == sheepCount2.intValue());
+
+
+    }
+
+    @Test
+    public void race_ConditionWithThreadPollMoreThan_One() throws  InterruptedException{
+        ExecutorService executorService = null;
+
+        try {
+            executorService = Executors.newFixedThreadPool(5);
+            for ( int i = 1; i< 1000000 ; i ++)
+                executorService.execute(() -> {
+                    sheepCount2.incrementAndGet();
+                    sheepCount1++; });
+            sleep(100);
+
+        }
+        finally {
+            if ( executorService != null) executorService.shutdown();
+        }
+        assertTrue(sheepCount1 != sheepCount2.intValue());
+
 
     }
 }
