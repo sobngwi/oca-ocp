@@ -2,8 +2,11 @@ package org.sobngwi.oca.collections.useMaps;
 
 import org.junit.Test;
 import org.sobngwi.oca.collections.AbstractCollections;
+import org.sobngwi.oca.functional.annotation.SelectIterable;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,23 +58,23 @@ public class Maps extends AbstractCollections {
 
     }
     @Test ( expected = NullPointerException.class)
-    public void mergeMapKeyNotExistAndValeIsNull(){
+    public void mergeMapKeyNotExistAndProposedValeIsNull(){
         integerStringMap.merge(2008, null, (k , v ) -> new StringBuilder("tata") ) ;
-        integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
+        //integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
         fail();
     }
 
     @Test ( expected = NullPointerException.class)
-    public void mergeMapKeyExistAndValeIsNull(){
+    public void mergeMapKeyExistAndProposedValeIsNull(){
         integerStringMap.merge(2007, null, (k , v ) -> new StringBuilder("tata") ) ;
-        integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
+        //integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
         fail();
     }
 
     @Test
     public void mergeMapKeyExistAndValeIsNotNullAndFunctionreturnNull(){
         integerStringMap.merge(2007, new StringBuilder("Youmsi"), (k , v ) -> null)  ;
-        integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
+        //integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
 
         assertThat(integerStringMap.keySet().toString() , allOf(containsString("2004"),
                 not(containsString("2007"))));
@@ -80,7 +83,7 @@ public class Maps extends AbstractCollections {
     @Test
     public void mergeMapKeyExistAndValeIsNotNullAndFunctionreturnNonNull(){
         integerStringMap.merge(2007, new StringBuilder("Youmsi"), (k , v ) -> new StringBuilder("Sagueu"))  ;
-        integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
+       // integerStringMap.forEach((k,v) -> System.out.println(String.format(" Key : %s , value %s ", k, v)));
 
         assertThat(integerStringMap.keySet().toString() , allOf(containsString("2004"),
                 (containsString("2007"))));
@@ -88,6 +91,41 @@ public class Maps extends AbstractCollections {
                 allOf( containsString("Sagueu"), not(containsString("Youmsi"))));
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void replaceAllTheValuesMatchingCriteriaOnUnmodifiableMapThrowsExeption() {
+        Map<String, Integer> iqMap = Collections.unmodifiableMap(
+                new ConcurrentHashMap<String, Integer>() {
+                    {
+                        put("Larry", 100);
+                        put("Curly", 90);
+                        put("Moe", 110);
+                    }
+                });
+
+        assertThat(SelectIterable.selectIf(iqMap.values(), x -> x <= 100 ).size(), equalTo(2));
+
+        iqMap.replaceAll((k, v) -> v - 50);
+        fail() ;
 
 
+    }
+
+    @Test
+    public void replaceAllTheValuesMatchingCriteriaOn() {
+        Map<String, Integer> iqMap =
+                new ConcurrentHashMap<String, Integer>() {
+                    {
+                        put("Larry", 100);
+                        put("Curly", 90);
+                        put("Moe", 110);
+                    }
+                };
+
+        assertThat(SelectIterable.selectIf(iqMap.values(), x -> x <= 100 ).size(), equalTo(2));
+
+        iqMap.replaceAll((k, v) -> v - 50);
+
+        assertThat(SelectIterable.selectIf(iqMap.values(), x -> x <= 100 ).size(), equalTo(3));
+
+    }
 }
