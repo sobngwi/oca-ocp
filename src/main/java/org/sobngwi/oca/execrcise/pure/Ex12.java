@@ -1,20 +1,12 @@
 package org.sobngwi.oca.execrcise.pure;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.*;
-import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Character.toLowerCase;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * This program provides several examples of a Java 8 stream that show
@@ -47,7 +39,8 @@ public class Ex12 {
      * rest lowercase.  Note that this is a "pure" function whose
      * return value is only determined by its input.
      */
-    private String capitalize(@NotNull String s) {
+    private String capitalize( String s) {
+        Objects.nonNull(s);
         if (s.length() == 0)
             return s;
         return s
