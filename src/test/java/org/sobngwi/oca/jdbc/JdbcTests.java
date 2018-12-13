@@ -316,6 +316,21 @@ public class JdbcTests extends AbstractJDBC {
         }
     }
 
+    @Test(expected = SQLException.class)
+    public void executionOf2StatementsconsecutivelyDesactiveTheFirstResultSet() throws SQLException {
+       try(
+
+        Connection conn = DriverManager.getConnection("jdbc:derby:zoo");
+        Statement stmt = conn.createStatement()) {
+
+               ResultSet rs = stmt.executeQuery("select count(*) from species");
+               int num      = stmt.executeUpdate("INSERT INTO species VALUES (3, 'Ant', .05)");
+               rs.next();
+               System.out.println(rs.getInt(1));
+       }
+
+    }
+
     @Test
     public void absolutePositionFromResultSet_bothReturn_boolean() {
         try (Connection conn = DriverManager.getConnection(url);
@@ -338,5 +353,6 @@ public class JdbcTests extends AbstractJDBC {
         } catch (SQLException e) {
             fail();
         }
+
     }
 }
