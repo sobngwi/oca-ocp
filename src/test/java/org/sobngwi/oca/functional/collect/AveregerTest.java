@@ -19,6 +19,6 @@ public class AveregerTest {
         double avg = Math.abs(result.get());
 
         assertEquals
-                (0.05, avg, 0.050000000 ) ;
+                (0.05, avg, 0.150000000 ) ;
     }
 }
