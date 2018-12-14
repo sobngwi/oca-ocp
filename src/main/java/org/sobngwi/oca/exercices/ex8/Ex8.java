@@ -1,4 +1,4 @@
-package org.sobngwi.oca.execrcise.ex8;
+package org.sobngwi.oca.exercices.ex8;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static org.sobngwi.oca.execrcise.ex8.FuturesCollector.toFuture;
+import static org.sobngwi.oca.exercices.ex8.FuturesCollector.toFuture;
 
 
 /**

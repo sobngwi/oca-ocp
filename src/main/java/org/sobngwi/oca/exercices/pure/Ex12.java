@@ -1,4 +1,4 @@
-package org.sobngwi.oca.execrcise.pure;
+package org.sobngwi.oca.exercices.pure;
 
 import java.util.*;
 import java.util.regex.Pattern;

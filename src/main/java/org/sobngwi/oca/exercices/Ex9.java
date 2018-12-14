@@ -1,8 +1,7 @@
-package org.sobngwi.oca.execrcise;
+package org.sobngwi.oca.exercices;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * This example uses a Java 8 ConcurrentHashMap and Java 8

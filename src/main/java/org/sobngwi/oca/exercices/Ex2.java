@@ -1,4 +1,4 @@
-package org.sobngwi.oca.execrcise;
+package org.sobngwi.oca.exercices;
 
 import org.sobngwi.oca.functional.annotation.SelectIterable;
 

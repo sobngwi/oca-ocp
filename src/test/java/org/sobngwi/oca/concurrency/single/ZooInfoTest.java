@@ -4,9 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
@@ -19,6 +17,7 @@ public class ZooInfoTest {
 
     private List<Integer> arrayListResult;
     private ExecutorService singleExecutorService;
+    private ScheduledExecutorService scheduledExecutorService ;
     final int maxSize = 1_000_000;
 
     static <E> Optional<E> wrapException(Future<E> future) {
@@ -32,9 +31,10 @@ public class ZooInfoTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         arrayListResult = new ArrayList<>();
         singleExecutorService = Executors.newSingleThreadExecutor();
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     }
 
     @Test
@@ -165,5 +165,7 @@ public class ZooInfoTest {
         if (singleExecutorService != null) singleExecutorService.shutdownNow();
 
     }
+
+
 
 }
