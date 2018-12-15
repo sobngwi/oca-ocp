@@ -22,14 +22,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
     At this point, three threads in the app are executing: main, t1, and t2.
 
-    An instance of a Java Thread represents the sequence of instructions in the
+    An getOptionsInstance of a Java Thread represents the sequence of instructions in the
     body of the encapsulated 'run' method (and any other instructions in methods
     that 'run' invokes).
 
     A thread that exits run() terminates, and cannot be restarted.
 */
 public class RaceCondition {
-    static AtomicInteger n = new AtomicInteger(0);                            // a single instance on n
+    static AtomicInteger n = new AtomicInteger(0);                            // a single getOptionsInstance on n
 	static Object lock = new Object();
     static void race() {
 	//n = 0;                               // initialize to zero before threads alter its value

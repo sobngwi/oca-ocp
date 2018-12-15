@@ -72,7 +72,7 @@ public class CrDemo
         // factory for a zero-param object of CrDemo.
         Supplier<CrDemo> factory = CrDemo::new;
 
-        // Use the factory to create a new instance of CrDemo and call
+        // Use the factory to create a new getOptionsInstance of CrDemo and call
         // its run() method.
         CrDemo crDemo = factory.get();
         crDemo.run();
@@ -125,7 +125,7 @@ public class CrDemo
         TriFactory<String, Integer, Long, CrDemo> factory = 
             CrDemo::new;
 
-        // Use the factory to create a new instance of CrDemo and call
+        // Use the factory to create a new getOptionsInstance of CrDemo and call
         // its run() method.
         factory.of("The answer is ", 4, 2L).run();
     }

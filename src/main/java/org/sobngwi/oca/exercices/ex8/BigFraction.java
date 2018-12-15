@@ -1336,7 +1336,7 @@ public final class BigFraction
                 dividend = dividend.multiply(bigRadix); //same as appending a "0" in this base
       
                 BigInteger[] divmod = dividend.divideAndRemainder(mDenominator);
-                quotient.append(Character.forDigit(divmod[0].intValueExact(), radix));
+                quotient.append(Character.forDigit(divmod[0].intValue(), radix));
                 dividend = divmod[1];
             }
     

@@ -19,7 +19,6 @@ import static java.util.stream.Collectors.*;
  */
 public class Ex12 {
     static public void main(String[] argv) {
-        // Create an instance of this class.
         Ex12 ex = new Ex12();
 
         // Demonstrate various approaches.
