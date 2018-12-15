@@ -7,6 +7,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -185,14 +186,14 @@ public class LocalDateTest {
 
         fmt = DateTimeFormatter.ofPattern("dd MMMM yy"); //  Print 2 digit year 18.
         formatedDate = todayIs27112018.format(fmt);
-        log.info(formatedDate);
+        log.finest(formatedDate);
         assertThat(formatedDate , allOf ( containsString("27"),
                 containsString("novembre"), not(containsString("2018")),
                 containsString("18") ));
 
         fmt = DateTimeFormatter.ofPattern("dd MMMM yyyyyy"); //  Print 6 digit year 002018.
         formatedDate = todayIs27112018.format(fmt);
-        log.info(formatedDate);
+        log.finest(formatedDate);
         assertThat(formatedDate , allOf ( containsString("27"),
                 containsString("novembre"),
                 containsString("002018") ));
@@ -240,5 +241,14 @@ public class LocalDateTest {
 
         LocalDate.now().plus(day);
 
+    }
+
+    @Test
+    public void localDateCreationWithoutUsingConvention() {
+        Locale l1 = new Locale("IN");
+        Locale l2 = new Locale("IN", "hi");
+
+        assertThat(l1, equalTo((new Locale("in"))));
+        assertThat(l2, equalTo((new Locale("in", "HI"))));
     }
 }

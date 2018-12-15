@@ -66,7 +66,7 @@ public class Exceptions extends AbstractException {
             thrown.expectMessage("file not found");
 
                 m2();
-                log.info("A checked exception  is rethrown  :");
+                log.fine("A checked exception  is rethrown  :");
         }
 
     @Test
@@ -78,7 +78,7 @@ public class Exceptions extends AbstractException {
             System.out.println();
         }
         catch (IllegalArgumentException e ){
-            log.info(String.format("Caught %s", e.getMessage()));
+            log.fine(String.format("Caught %s", e.getMessage()));
             throw e;
         }
 
@@ -94,7 +94,7 @@ public class Exceptions extends AbstractException {
             throw new RuntimeException( "Turkeys Ran off") ;
         }
         catch (IllegalArgumentException e ){
-            log.info(String.format("Caught %s", e.getMessage()));
+            log.fine(String.format("Caught %s", e.getMessage()));
             for ( Throwable t : e.getSuppressed()) {
                 System.out.println( " Suppressed : " + t.getMessage());
             }
@@ -106,21 +106,42 @@ public class Exceptions extends AbstractException {
     public void autoclosableWithSuppressedMessage() {
 
 
-        try (AutoClosableClass    autoClosableClass = new AbstractException.AutoClosableClass();
-             AutoClosableClass    autoClosableClass2 = new AbstractException.AutoClosableClass();
-             AutoClosableClass    autoClosableClass3 = new AbstractException.AutoClosableClass();
-             ) {
-
+        try (AutoClosableClass ignored = new AbstractException.AutoClosableClass();
+             AutoClosableClass ignored1 = new AbstractException.AutoClosableClass();
+             AutoClosableClass ignored2 = new AbstractException.AutoClosableClass()) {
         }
         catch (IllegalArgumentException e ){
-            log.info(String.format("Caught %s", e.getMessage()));
+            log.fine(String.format("Caught %s", e.getMessage()));
 
             assertTrue(e.getSuppressed().length == 2);
             assertThat(2, equalTo(e.getSuppressed().length));
             for ( Throwable t : e.getSuppressed()) {
-                System.out.println( " Suppressed : " + t.getMessage());
+                log.fine( " Suppressed : " + t.getMessage());
             }
         }
 
     }
+
+    @Test
+    public void autoclosableWithSuppressedMessageAndprimaryException() {
+
+
+        try (AutoClosableClass    autoClosableClass =  new AbstractException.AutoClosableClass();
+             AutoClosableClass    autoClosableClass2 = new AbstractException.AutoClosableClass();
+             AutoClosableClass    autoClosableClass3 = new AbstractException.AutoClosableClass();
+        ) {
+            throw new RuntimeException("rain");
+        }
+        catch (Exception e ){
+            log.finest(String.format("Primary Exception message Caught %s", e.getMessage()));
+            assertThat(e.getMessage(), equalTo("rain"));
+            assertTrue(e.getSuppressed().length == 3);
+            assertThat(3, equalTo(e.getSuppressed().length));
+            for ( Throwable t : e.getSuppressed()) {
+                log.finest( " Suppressed : " + t.getMessage());
+            }
+        }
+
+    }
+
 }
