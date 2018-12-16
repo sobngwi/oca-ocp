@@ -8,15 +8,15 @@ import java.util.logging.Logger;
 public class DoLog {
 
     private static volatile  Logger log = null;
+
     public synchronized static Logger log() {
 
         InputStream stream = DoLog.class.getClassLoader().getResourceAsStream("logging.properties");
         try {
             LogManager.getLogManager().readConfiguration(stream);
             if (log == null)
-            return Logger.getLogger(DoLog.class.getName());
+                return Logger.getLogger(DoLog.class.getName());
             else {
-                log = Logger.getLogger(DoLog.class.getName());
                 return log ;
             }
         }
