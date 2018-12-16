@@ -209,7 +209,7 @@ public class PlayPingPong implements Runnable {
                                 mMaxIterations);
                 break;
             default:
-                throw new NoSuchMethodError();
+                throw new RuntimeException("Not Yet implemented !");
         }
     }
 }

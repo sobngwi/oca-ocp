@@ -7,16 +7,17 @@ import java.util.stream.Stream;
 
 /**
  * @class Options
- * 
  * @brief This class implements the Singleton pattern to handle
- *        command-line option processing.
+ * command-line option processing.
  */
 public class Options {
-    private static final  Logger log = DoLog.log();
-    /** The singleton @a Options getOptionsInstance. */
+    private static final Logger log = DoLog.log();
+    /**
+     * The singleton @a Options getOptionsInstance.
+     */
     private static Options mUniqueInstance = null;
 
-    /** 
+    /**
      * Maximum number of iterations to run the program (defaults to
      * 10).
      */
@@ -28,8 +29,8 @@ public class Options {
      */
     private SynchroMechanism mSyncMechanism = SynchroMechanism.SEMA;
 
-    /** 
-     * Method to return the one and only singleton uniqueInstance. 
+    /**
+     * Method to return the one and only singleton uniqueInstance.
      */
     public static Options getOptionsInstance() {
         if (mUniqueInstance == null)
@@ -38,8 +39,8 @@ public class Options {
         return mUniqueInstance;
     }
 
-    /** 
-     * Number of iterations to run the program. 
+    /**
+     * Number of iterations to run the program.
      */
     public int maxIterations() {
         return mMaxIterations;
@@ -58,44 +59,61 @@ public class Options {
      */
     public boolean parseArgs(String argv[]) {
         if (argv != null) {
-            Stream.of(argv).forEachOrdered(o -> System.out.println(o + " "));
-            System.out.println();
+            Stream.of(argv).forEachOrdered(o -> log.info("Main Arg: " + o ));
             for (int argc = 0; argc < argv.length; argc += 2)
                 if (argv[argc].equals("-i"))
                     mMaxIterations = Integer.parseInt(argv[argc + 1]);
                 else if (argv[argc].equals("-s"))
-                    mSyncMechanism =  SynchroMechanism.valueOf(argv[argc + 1]);//argv[argc + 1];
+                    switch (argv[argc + 1]) {
+                        case "1":
+                            mSyncMechanism = SynchroMechanism.SEMA;
+                            break;
+                        case "2":
+                            mSyncMechanism = SynchroMechanism.MONOBJ;
+                            break;
+                        case "3":
+                            mSyncMechanism = SynchroMechanism.COND;
+                            break;
+                        case "4":
+                            mSyncMechanism = SynchroMechanism.QUEUE;
+                            break;
+
+                        default:
+                            mSyncMechanism = SynchroMechanism.SEMA;
+                            break;
+
+                    }
                 else {
                     printUsage();
                     return false;
                 }
             log.info(String.format("Running with options mMaxIterations =[%d], mSyncMechanism =[%s]",
-                    mMaxIterations, mSyncMechanism ));
+                    mMaxIterations, mSyncMechanism));
             return true;
         } else
             return false;
     }
 
-    /** 
-     * Print out usage and default values. 
+    /**
+     * Print out usage and default values.
      */
     public void printUsage() {
         PlatformStrategy platform = PlatformStrategy.instance();
         platform.errorLog("Options",
-                          "\nHelp Invoked on ");
+                "\nHelp Invoked on ");
         platform.errorLog("Options",
-                          "[-his] ");
+                "[-his] ");
         platform.errorLog("", "");
         platform.errorLog("", "");
 
         platform.errorLog("Options",
-                          "Usage: ");
+                "Usage: ");
         platform.errorLog("Options",
-                          "-h: invoke help");
+                "-h: invoke help");
         platform.errorLog("Options",
-                          "-i max-number-of-iterations");
+                "-i max-number-of-iterations");
         platform.errorLog("Options",
-                          "-s sync-mechanism (e.g., \"SEMA\", \"COND\", \"MONOBJ\", or \"QUEUE\"");
+                "-s sync-mechanism (e.g., \"SEMA\", \"COND\", \"MONOBJ\", or \"QUEUE\"");
     }
 
     /**
