@@ -1,5 +1,8 @@
 package org.sobngwi.oca.concurrency.pingpong.good;
 
+import org.sobngwi.oca.functional.Logs.DoLog;
+
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -9,6 +12,7 @@ import java.util.stream.Stream;
  *        command-line option processing.
  */
 public class Options {
+    private static final  Logger log = DoLog.log();
     /** The singleton @a Options getOptionsInstance. */
     private static Options mUniqueInstance = null;
 
@@ -16,7 +20,7 @@ public class Options {
      * Maximum number of iterations to run the program (defaults to
      * 10).
      */
-    private int mMaxIterations = 6;
+    private int mMaxIterations = 10;
 
     /**
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
@@ -65,7 +69,7 @@ public class Options {
                     printUsage();
                     return false;
                 }
-            System.out.println(String.format("Running with options mMaxIterations =[%d], mSyncMechanism =[%s]",
+            log.info(String.format("Running with options mMaxIterations =[%d], mSyncMechanism =[%s]",
                     mMaxIterations, mSyncMechanism ));
             return true;
         } else
