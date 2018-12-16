@@ -26,7 +26,7 @@ public class Options {
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
      * and "QUEUE".  Defaults to "SEMA".
      */
-    private String mSyncMechanism = "SEMA";
+    private SynchroMechanism mSyncMechanism = SynchroMechanism.SEMA;
 
     /** 
      * Method to return the one and only singleton uniqueInstance. 
@@ -49,7 +49,7 @@ public class Options {
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
      * "QUEUE", and "PADDLE".  Defaults to "PADDLE".
      */
-    public String syncMechanism() {
+    public SynchroMechanism syncMechanism() {
         return mSyncMechanism;
     }
 
@@ -64,7 +64,7 @@ public class Options {
                 if (argv[argc].equals("-i"))
                     mMaxIterations = Integer.parseInt(argv[argc + 1]);
                 else if (argv[argc].equals("-s"))
-                    mSyncMechanism = argv[argc + 1];
+                    mSyncMechanism =  SynchroMechanism.valueOf(argv[argc + 1]);//argv[argc + 1];
                 else {
                     printUsage();
                     return false;

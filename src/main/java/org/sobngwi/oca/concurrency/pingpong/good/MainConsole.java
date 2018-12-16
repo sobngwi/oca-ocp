@@ -52,7 +52,7 @@ public class MainConsole {
         try {
             log.info("MainConsole.main : get the result of pin pong Thread completion result: " + result.get());
             threadPoolExecutor.shutdown();
-            if ( ! threadPoolExecutor.awaitTermination(1, TimeUnit.SECONDS)) threadPoolExecutor.shutdownNow();
+            if ( ! threadPoolExecutor.awaitTermination(1, TimeUnit.NANOSECONDS)) threadPoolExecutor.shutdownNow();
             log.info("MainConsole.main : threadPoolExecutor isTerminated " + threadPoolExecutor.isTerminated());
         } catch (ExecutionException | InterruptedException e) {
             log.throwing("MainConsole", "MainConsole.main", e);
