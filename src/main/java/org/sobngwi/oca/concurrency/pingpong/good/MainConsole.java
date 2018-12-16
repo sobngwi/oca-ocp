@@ -1,5 +1,13 @@
 package org.sobngwi.oca.concurrency.pingpong.good;
 
+import org.sobngwi.oca.functional.Logs.DoLog;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.logging.Logger;
+
 /**
  * @class MainConsole
  *
@@ -7,6 +15,8 @@ package org.sobngwi.oca.concurrency.pingpong.good;
  *        version of the PingPong application.
  */
 public class MainConsole {
+
+    private static final Logger log= DoLog.log();
     /**
      * The Java virtual machine requires the instantiation of a main
      * method to run the console version of the PlayPingPong app.
@@ -22,9 +32,7 @@ public class MainConsole {
              (System.out).makePlatformStrategy());
 
         /** Initializes the Options singleton. */
-        if ( Options.getOptionsInstance().parseArgs(args))
-            System.out.println("Options set ");
-        else System.out.println("No Options provide : run with default options");
+         Options.getOptionsInstance().parseArgs(args);
 
         /**
          * Create a PlayPingPong object to run the designated number
@@ -37,6 +45,22 @@ public class MainConsole {
         /**
          * Start a thread to play ping-pong.
          */
-        new Thread (pingPong).start();
+        //new Thread (pingPong).start();
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        final Future<?> result = executorService.submit(pingPong, "NOK");
+        while (true){
+            try {
+               log.info("Pooling ...." + result.get());
+                if (!result.get().equals("NOK")) break;
+            } catch (ExecutionException e) {
+                log.throwing("MainConsole","MainConsole.main" , e);
+            } catch (InterruptedException e) {
+                log.throwing("MainConsole","MainConsole.main" , e);
+            }
+        }
+
+        executorService.shutdown();
+        System.out.println("End the ping pong Game .");
     }
 }
