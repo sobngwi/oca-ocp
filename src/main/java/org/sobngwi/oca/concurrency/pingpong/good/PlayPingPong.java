@@ -7,7 +7,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * @class PlayPingPong
@@ -30,7 +29,7 @@ public class PlayPingPong implements Runnable {
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
      * "QUEUE".
      */
-    private final SynchroMechanism mSyncMechanism;
+    private final SynchroMechanismType mSyncMechanism;
 
     /**
      * Maximum number of ping pong Threads.
@@ -47,7 +46,7 @@ public class PlayPingPong implements Runnable {
      * Constructor initializes the data members.
      */
     public PlayPingPong(int maxIterations,
-                        SynchroMechanism syncMechanism) {
+                        SynchroMechanismType syncMechanism) {
         // Number of iterations to perform pings and pongs.
         mMaxIterations = maxIterations;
 
@@ -81,8 +80,9 @@ public class PlayPingPong implements Runnable {
             thread.start();*/
         ExecutorService threadPoolExecutor = ThreadPoolSupplier.getThreadPoolInstance();
 
-        Future<String> ping = threadPoolExecutor.submit(pingPongThreads[PING_THREAD], "OK");
         Future<String> pong = threadPoolExecutor.submit(pingPongThreads[PONG_THREAD], "OK");
+        Future<String> ping = threadPoolExecutor.submit(pingPongThreads[PING_THREAD], "OK");
+
 
         // Barrier synchronization to wait for all work to be done
         // before exiting play().
@@ -107,9 +107,9 @@ public class PlayPingPong implements Runnable {
      * PingPongThread subclass based on the @code syncMechanism
      * parameter.
      */
-    private void makePingPongThreads(SynchroMechanism synchroMechanism,
+    private void makePingPongThreads(SynchroMechanismType synchroMechanismType,
                                      PingPongThread[] pingPongThreads) {
-        switch (synchroMechanism) {
+        switch (synchroMechanismType) {
             case SEMA:
                 // Create the Java Semaphores that ensure threads print
                 // "ping" and "pong" in the correct alternating order.

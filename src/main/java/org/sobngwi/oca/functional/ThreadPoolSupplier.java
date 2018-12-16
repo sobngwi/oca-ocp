@@ -5,13 +5,16 @@ import java.util.concurrent.Executors;
 
 public class ThreadPoolSupplier {
     private static final int MAX_THREADS = 10;
-    private static volatile ExecutorService result = null;
+    private static volatile ExecutorService result = null ;// Executors.newFixedThreadPool(MAX_THREADS)
 
     public static synchronized ExecutorService getThreadPoolInstance() {
-
-        if (result == null) return Executors.newFixedThreadPool(MAX_THREADS);
+        if (result == null) {
+           synchronized (ThreadPoolSupplier.class) {
+               result = Executors.newFixedThreadPool(MAX_THREADS);
+               return result;
+           }
+        }
         else {
-            result = Executors.newFixedThreadPool(MAX_THREADS);
             return result;
         }
     }

@@ -21,13 +21,13 @@ public class Options {
      * Maximum number of iterations to run the program (defaults to
      * 10).
      */
-    private int mMaxIterations = 10;
+    private int mMaxIterations = 1;
 
     /**
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
      * and "QUEUE".  Defaults to "SEMA".
      */
-    private SynchroMechanism mSyncMechanism = SynchroMechanism.SEMA;
+    private SynchroMechanismType mSyncMechanism = SynchroMechanismType.SEMA;
 
     /**
      * Method to return the one and only singleton uniqueInstance.
@@ -50,7 +50,7 @@ public class Options {
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
      * "QUEUE", and "PADDLE".  Defaults to "PADDLE".
      */
-    public SynchroMechanism syncMechanism() {
+    public SynchroMechanismType syncMechanism() {
         return mSyncMechanism;
     }
 
@@ -66,20 +66,20 @@ public class Options {
                 else if (argv[argc].equals("-s"))
                     switch (argv[argc + 1]) {
                         case "1":
-                            mSyncMechanism = SynchroMechanism.SEMA;
+                            mSyncMechanism = SynchroMechanismType.SEMA;
                             break;
                         case "2":
-                            mSyncMechanism = SynchroMechanism.MONOBJ;
+                            mSyncMechanism = SynchroMechanismType.MONOBJ;
                             break;
                         case "3":
-                            mSyncMechanism = SynchroMechanism.COND;
+                            mSyncMechanism = SynchroMechanismType.COND;
                             break;
                         case "4":
-                            mSyncMechanism = SynchroMechanism.QUEUE;
+                            mSyncMechanism = SynchroMechanismType.QUEUE;
                             break;
 
                         default:
-                            mSyncMechanism = SynchroMechanism.SEMA;
+                            mSyncMechanism = SynchroMechanismType.SEMA;
                             break;
 
                     }
