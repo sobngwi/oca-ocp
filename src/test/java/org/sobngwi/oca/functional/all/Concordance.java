@@ -24,7 +24,6 @@ public class Concordance {
 
 
     @Test
-    @Ignore
     public void concordance() throws IOException {
 
         Files
@@ -38,8 +37,6 @@ public class Concordance {
                 .limit(10)
                 .map(l -> String.format("%20s  :  %5d", l.getKey(), l.getValue()))
                 .forEach(System.out::println);
-
-
     }
 
     @Test
