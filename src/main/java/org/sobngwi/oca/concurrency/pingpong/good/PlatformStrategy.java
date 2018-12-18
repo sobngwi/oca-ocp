@@ -1,6 +1,8 @@
 package org.sobngwi.oca.concurrency.pingpong.good;
 
-/** 
+import java.util.List;
+
+/**
  * @class PlatformStrategy
  *
  * @brief Provides methods that define a platform-independent
@@ -14,6 +16,7 @@ package org.sobngwi.oca.concurrency.pingpong.good;
  */
 public abstract class PlatformStrategy
 {
+    protected  abstract List<String> getOutPutresult();
     /** 
      * Number of threads used to play ping-pong. 
      */

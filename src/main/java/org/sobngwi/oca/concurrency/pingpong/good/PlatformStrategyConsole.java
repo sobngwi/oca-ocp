@@ -1,5 +1,8 @@
 package org.sobngwi.oca.concurrency.pingpong.good;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.io.PrintStream;
 
@@ -12,6 +15,13 @@ import java.io.PrintStream;
  *        "Concrete Strategy" in the Strategy pattern.
  */
 public class PlatformStrategyConsole extends PlatformStrategy {
+
+
+    private List<String> outPutresult = Collections.synchronizedList( new ArrayList<>());
+
+    public List<String> getOutPutresult() {
+        return Collections.unmodifiableList(outPutresult);
+    }
     /**
      * An exit barrier that's decremented each time a thread exits,
      * which control when the PlayPingPong run() hook method returns.
@@ -43,6 +53,7 @@ public class PlatformStrategyConsole extends PlatformStrategy {
      */
     public void print(String outputString) {
         // Print to the console window.
+        outPutresult.add(outputString);
         mOutput.println(outputString);
     }
 

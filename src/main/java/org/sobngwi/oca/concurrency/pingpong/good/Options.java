@@ -59,7 +59,7 @@ public class Options {
      */
     public boolean parseArgs(String argv[]) {
         if (argv != null) {
-            Stream.of(argv).forEachOrdered(o -> log.info("Main Arg: " + o ));
+            Stream.of(argv).forEachOrdered(o -> log.finest("Main Arg: " + o ));
             for (int argc = 0; argc < argv.length; argc += 2)
                 if (argv[argc].equals("-i"))
                     mMaxIterations = Integer.parseInt(argv[argc + 1]);
@@ -87,7 +87,7 @@ public class Options {
                     printUsage();
                     return false;
                 }
-            log.info(String.format("Running with options mMaxIterations =[%d], mSyncMechanism =[%s]",
+            log.finest(String.format("Running with options mMaxIterations =[%d], mSyncMechanism =[%s]",
                     mMaxIterations, mSyncMechanism));
             return true;
         } else

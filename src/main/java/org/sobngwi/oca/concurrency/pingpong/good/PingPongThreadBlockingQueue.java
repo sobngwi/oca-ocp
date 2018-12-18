@@ -18,8 +18,8 @@ public class PingPongThreadBlockingQueue extends PingPongThread {
      * simulate conditional waiting and calling put() on our
      * thread to simulate notifying a waiter.
      */
-    private final LinkedBlockingQueue<Object> mMine;
-    private final LinkedBlockingQueue<Object> mOther;
+    private final LinkedBlockingQueue<Object> thisObjectLinkedBlockingQueue;
+    private final LinkedBlockingQueue<Object> otherObjectLinkedBlockingQueue;
 
     /**
      * This "ball" is used to pass control between two Threads,
@@ -36,8 +36,8 @@ public class PingPongThreadBlockingQueue extends PingPongThread {
                                        LinkedBlockingQueue<Object> other,
                                        int maxIterations) {
         super(stringToPrint, maxIterations);
-        mMine = mine;
-        mOther = other;
+        thisObjectLinkedBlockingQueue = mine;
+        otherObjectLinkedBlockingQueue = other;
     }
 
     /**
@@ -48,7 +48,7 @@ public class PingPongThreadBlockingQueue extends PingPongThread {
         try {
             // Block until there's an item to take from the other
             // BlockingQueue.
-            mPingPongBall = mOther.take();
+            mPingPongBall = otherObjectLinkedBlockingQueue.take();
         } catch (InterruptedException e) {
             // Ignore InterruptedExceptions.
         }
@@ -59,7 +59,7 @@ public class PingPongThreadBlockingQueue extends PingPongThread {
         try {
             // Put the ball back in the other BlockingQueue to notify
             // it to wakeup and run.
-            mMine.put(mPingPongBall);
+            thisObjectLinkedBlockingQueue.put(mPingPongBall);
         } catch (InterruptedException e) {
             // Ignore InterruptedExceptions.
         }

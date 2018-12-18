@@ -1,6 +1,7 @@
 package org.sobngwi.oca.concurrency.pingpong.good;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import android.util.Log;
@@ -14,6 +15,11 @@ import android.util.Log;
  *        "Concrete Strategy" in the Strategy pattern.
  */
 public class PlatformStrategyAndroid extends PlatformStrategy {
+    @Override
+    protected List<String> getOutPutresult()  {
+        throw new  RuntimeException("Not Yet supported ") ;
+    }
+
     /**
      * An exit barrier that's decremented each time a thread exits,
      * which control when the PlayPingPong run() hook method returns.

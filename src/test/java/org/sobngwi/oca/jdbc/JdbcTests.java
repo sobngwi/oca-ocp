@@ -355,4 +355,13 @@ public class JdbcTests extends AbstractJDBC {
         }
 
     }
-}
+
+    @Test
+    public void name() throws Exception{
+            try (Connection conn = DriverManager.getConnection(url);
+                 Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+                ResultSet resultSet = stmt.executeQuery("Select * from animal order by id asc ");
+            }
+        }
+    }
+

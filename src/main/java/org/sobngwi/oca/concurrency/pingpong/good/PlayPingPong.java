@@ -29,7 +29,7 @@ public class PlayPingPong implements Runnable {
      * Which synchronization to use, e.g., "SEMA", "COND", "MONOBJ",
      * "QUEUE".
      */
-    private final SynchroMechanismType mSyncMechanism;
+    private final SynchroMechanismType synchroMechanismType;
 
     /**
      * Maximum number of ping pong Threads.
@@ -51,7 +51,7 @@ public class PlayPingPong implements Runnable {
         mMaxIterations = maxIterations;
 
         // Which type of synchronization mechanism to use.
-        mSyncMechanism = syncMechanism;
+        synchroMechanismType = syncMechanism;
     }
 
     /**
@@ -72,13 +72,13 @@ public class PlayPingPong implements Runnable {
 
         // Create the appropriate type of threads with the designated
         // synchronization mechanism.
-        makePingPongThreads(mSyncMechanism, pingPongThreads);
+        makePingPongThreads(synchroMechanismType, pingPongThreads);
 
         // Start ping and pong threads, which calls their run()
         // methods.
         /*for (PingPongThread thread : pingPongThreads)
             thread.start();*/
-        ExecutorService threadPoolExecutor = ThreadPoolSupplier.getThreadPoolInstance();
+        final ExecutorService threadPoolExecutor = ThreadPoolSupplier.getThreadPoolInstance();
 
         Future<String> pong = threadPoolExecutor.submit(pingPongThreads[PONG_THREAD], "OK");
         Future<String> ping = threadPoolExecutor.submit(pingPongThreads[PING_THREAD], "OK");
@@ -89,9 +89,9 @@ public class PlayPingPong implements Runnable {
         PlatformStrategy.instance().awaitDone();
         try {
             if (ping.get().equals("OK") && pong.get().equals("OK")) {
-                log.info("PlayPingPong.run : ping and pong operations commands done.");
-                threadPoolExecutor.shutdown();
-                if (!threadPoolExecutor.awaitTermination(1, TimeUnit.NANOSECONDS)) threadPoolExecutor.shutdownNow();
+                log.finest("PlayPingPong.run : ping and pong operations commands done.");
+               // threadPoolExecutor.shutdown();
+               // if (!threadPoolExecutor.awaitTermination(1, TimeUnit.NANOSECONDS)) threadPoolExecutor.shutdownNow();
                 log.info("PlayPingPong.run: pool shutdown ... is terminated =" + threadPoolExecutor.isTerminated());
             }
         } catch (ExecutionException | InterruptedException e) {
