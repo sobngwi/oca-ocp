@@ -7,11 +7,8 @@ import java.util.List;
 
 public class Q10 {
     static  class MyComparator implements Comparator<String> {
-
         public int compare(String a, String b) {
-
             return b.toLowerCase().compareTo(a.toLowerCase());
-
         }
     }
 
