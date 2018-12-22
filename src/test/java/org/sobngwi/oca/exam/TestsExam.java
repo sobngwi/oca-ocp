@@ -2,8 +2,7 @@ package org.sobngwi.oca.exam;
 
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -214,7 +213,7 @@ public class TestsExam {
     }
 
     @Test
-    public void Q47_sameKeyPutInMapRemoveOriginalValue() {
+    public void Q47_sameKeyPutInMapOverridesOriginalValue() {
         TreeMap<Integer, String> treeMap = new TreeMap<>();
         treeMap.put(3, "a");
         treeMap.put(3, "3");
@@ -341,6 +340,28 @@ public class TestsExam {
 
         for (Integer item : list2) list2.remove(0);
 
+    }
+
+    @Test
+    public void concurrentHashMapSupportConcurrentModifications() {
+        Map<Integer, Integer> intsMaps = new ConcurrentHashMap<>();
+        intsMaps.put(1, 1);
+        intsMaps.put(2, 1);
+        intsMaps.put(3, 1);
+        intsMaps.put(4, 1);
+        for ( int i : intsMaps.keySet() ) {
+            intsMaps.remove(i);
+        }
+    }
+
+    @Test(expected = ConcurrentModificationException.class)
+    public void hashMapDoesNotSupportconcurrentModification() {
+        Map<Integer, Integer> intsMaps = new HashMap<>();
+        intsMaps.put(1, 1);
+        intsMaps.put(2, 1);
+        for ( int i : intsMaps.keySet() ) {
+            intsMaps.remove(i);
+        }
     }
 
     @Test(expected = NullPointerException.class)
@@ -533,7 +554,7 @@ public class TestsExam {
     }
 
     @Test
-    public void name() {
+    public void groupingBypredicate_groupingByCondition() {
       //  What is the output of the following?
                 Stream<String> s = Stream.empty();
         Stream<String> s2 = Stream.empty();
@@ -543,6 +564,60 @@ public class TestsExam {
         Map<Boolean, List<String>> g = s2.collect(
                 Collectors.groupingBy(st ->st.startsWith("n")));
         System.out.println(p + " " + g);
+    }
+
+    enum Fruit{
+        APPLE("red"), BANANA("yellow"), ORANGE("orange"), PLUM("purple");
+        private String color ;
+        Fruit(String color) {
+            this.color = color;
+        }
+
+       /* @Override
+        public String toString() {
+            return "Fruit{" +
+                    "color='" + color + '\'' +
+                    '}';
+        }*/
+
+    }
+
+    @Test
+    public void enumTest_printing_an_enum_gives_its_unqualified_name() {
+        Fruit apple = Fruit.APPLE;
+        assertThat(apple.color, equalTo("red"));
+        assertThat(apple.toString(), equalTo("APPLE"));
+    }
+
+
+    @Test(expected = NoSuchElementException.class)
+    public void opt_orElse_optOrElseGet() {
+       // Which of the following fill in the blank on line 6 so that the program can compile and run without throwing an exception? (Choose all that apply.)
+         DoubleStream ds = DoubleStream.empty();
+         OptionalDouble opt = ds.findAny();
+         opt.orElse(0);
+         opt.orElseGet(() -> 0.0);
+         opt.getAsDouble();
+    }
+
+    @Test
+    public void deserialisation_into_list_of_objects() throws FileNotFoundException, ClassNotFoundException {
+      //  Assuming Donkey is an existing class that properly implements the Serializable interface and dataFile refers to a valid File object that exists within the file system, what statements about the following code snippet are true? (Choose all that apply.)
+        List<Object> donkeys = new ArrayList<>();
+         try (ObjectInputStream in = new ObjectInputStream(
+                new BufferedInputStream(new FileInputStream(new File("xxx"))))) {
+                while(true) {
+                    Object object = in.readObject();
+                if(object instanceof WhichBrowser.Browser)
+                    donkeys.add(object);
+                 }
+             } catch (IOException e) { }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void canNotMixAbsolutAndRelativePath() {
+        Callable<?> c = () -> { for ( int i = 0; i<10; i++){} return 10;};
+        Paths.get(("sobngwi")).relativize(  Paths.get("/Users"));
     }
 }
 
