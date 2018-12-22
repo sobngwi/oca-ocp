@@ -6,8 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.*;
+import java.util.Deque;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.RecursiveTask;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -361,7 +363,29 @@ public class JdbcTests extends AbstractJDBC {
             try (Connection conn = DriverManager.getConnection(url);
                  Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
                 ResultSet resultSet = stmt.executeQuery("Select * from animal order by id asc ");
+                resultSet = stmt.executeQuery("Select count(*) from animal  ");
+                resultSet.next();
+                assertThat(resultSet.getInt(1), equalTo(5));
             }
         }
+
+    @Test (expected = SQLException.class)
+    public void Q100_exam_reverseTheTypeAndMode_of_Statement_thowsException() throws SQLException {
+        String sql = "select name from animal order by name";
+        try (Connection conn = DriverManager.getConnection("jdbc:derby:zoo");
+             Statement stmt = conn.createStatement(
+                     ResultSet.CONCUR_READ_ONLY, ResultSet.TYPE_SCROLL_INSENSITIVE);
+
+             ResultSet rs = stmt.executeQuery(sql)) {
+            rs.next();
+            rs.previous();
+            rs.previous();
+            rs.next();
+            rs.next();
+            rs.absolute(2);
+            System.out.println(rs.getString(1));
+        }
+
     }
+}
 

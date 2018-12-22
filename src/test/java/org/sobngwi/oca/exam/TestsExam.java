@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -17,10 +17,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.zip.DataFormatException;
+import java.util.function.Predicate;
+import java.util.stream.*;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -391,7 +389,7 @@ public class TestsExam {
 
     }
 
-     class Panda {
+     class Panda implements Comparable <Panda>{
         String name;
         Panda(String name) { this.name = name; }
 
@@ -407,6 +405,12 @@ public class TestsExam {
          public int hashCode() {
              return Objects.hash(name);
          }
+
+
+         @Override
+         public int compareTo(Panda o) {
+             return name.length() - o.name.length();
+         }
      }
 
      @Test
@@ -415,10 +419,131 @@ public class TestsExam {
         s.add(new Panda("Bao Bao"));
         s.add(new Panda("Mei Xiang"));
         s.add(new Panda("Bao Bao"));
-        
+
         assertThat(s.size(), equalTo(2));
     }
 
+    @Test
+    public void Q180() throws IOException {
+
+        Path path1 = Paths.get("/lemur/habitat/./party.txt");
+        Path path2 =  Paths.get("/Users/sobngwi/intelliJ/codebase/certification/oca/src/test/java/org/sobngwi/oca/exam/q14.txt");//path1.subpath(1,4).toAbsolutePath();
+        assertFalse(
+        Files.lines(path2)
+                .flatMap(p -> Stream.of(p.split(",")))
+                .filter(s -> s.trim().length()>0)
+                .allMatch(s -> s.length()>3));
+    }
+
+    private static void magic(Stream<Integer> s) {
+        Optional o = s.filter(x -> x < 5)
+                .max(Comparator.comparingInt(x -> x));
+        System.out.println(o.get());
+    }
+    @Test(expected = NoSuchElementException.class)
+    public void Q156() {
+        magic(Stream.of(5, 10));
+
+    }
+
+    @Test
+    public void Q153() {
+        List letters = Arrays.asList('a', 'b', 'c');
+        letters.stream() // c1
+                .sorted() // c2
+                .distinct() // c3
+                .forEach(System.out::print);// c4
+               // .sorted(); //can not be call after a terminal operation
+    }
+
+    @Test
+    public void Q146() {
+        Set s = new TreeSet<>();
+        s.add(new Panda("Bao Bao"));
+        s.add(new Panda("Mei Xiang"));
+        s.add(new Panda("Bao Bao"));
+        assertThat(s.size(), equalTo(2));
+    }
+
+    @Test
+    public void Q136() {
+        ExecutorService service = Executors.newScheduledThreadPool(10);
+        LongStream.of(101,704,1126) // p1
+                .forEach((s) -> service.submit( // p2
+                        () -> System.out.print(2*s + " "))); // p3
+
+    }
+
+     static class WhichAnimal {
+         enum AnimalsInPark {
+             SQUIRREL, CHIPMUNK, SPARROW
+         }
+     }
+
+    @Test
+    public void Q132() {
+        WhichAnimal.AnimalsInPark a = WhichAnimal.AnimalsInPark.CHIPMUNK;
+        switch (a) {
+            case SQUIRREL:
+                System.out.print("S");
+            case CHIPMUNK:
+                System.out.print("C");
+            default:
+                System.out.print("P");
+        }
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void Q127_calling_getRoot_OnrelativePath_throwsException() throws IOException {
+        Path path = Paths.get("bear/polar/./environment").normalize().getRoot(); // w1
+        System.out.println(Files.list(path)
+                .filter(p -> !Files.isDirectory(p)) // w2
+                .map(p -> p) // w3
+                .collect(Collectors.toSet())
+                .size());
+    }
+
+    @Test
+    public void Q126_getNameCount_doesntTakeParameter() throws IOException {
+        Path path = Paths.get("src/test/java/org/sobngwi/oca/exam/q14.txt").getParent();
+        Files.walk(path, 5, FileVisitOption.FOLLOW_LINKS) // b1
+                .filter(p -> p.resolve(p).getFileName().toString().endsWith(".txt")) // b2
+                .filter(p -> p.getNameCount()>4) ;// b3
+    }
+
+    @Test
+    public void Q125() {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(new Integer(6));
+        q.add(new Integer(6));
+
+        assertThat(q.size(), equalTo(2));
+        assertFalse(q.contains(6L) );
+    }
+    /* Another singleton with static initialisation */
+    public static  class ExhibitionManager {
+        public final static ExhibitionManager exhibitionManager;
+        static {
+            exhibitionManager = new ExhibitionManager();
+        }
+        private  ExhibitionManager() {}
+        public static ExhibitionManager getExhibitionManager() {
+            return new ExhibitionManager();
+        }
+    }
+
+    @Test
+    public void name() {
+      //  What is the output of the following?
+                Stream<String> s = Stream.empty();
+        Stream<String> s2 = Stream.empty();
+        Predicate<String> condition = b -> b.startsWith("c");
+        Map<Boolean, List<String>> p = s.collect(
+                Collectors.partitioningBy(condition));
+        Map<Boolean, List<String>> g = s2.collect(
+                Collectors.groupingBy(st ->st.startsWith("n")));
+        System.out.println(p + " " + g);
+    }
 }
 
 
