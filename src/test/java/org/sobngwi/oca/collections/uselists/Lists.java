@@ -44,16 +44,79 @@ public class Lists extends AbstractCollections {
         strings = Arrays.asList("A", "b", "Z", "z", "0", "1", "9", "X");
 
 
-        strings.sort(null); // java.lang.Comparable is the natural order to sort
-
+        // strings.sort(null); // java.lang.Comparable is the natural order to sort which is in CASE_INSENSITIVE_ORDER.
+        strings.sort(String.CASE_INSENSITIVE_ORDER);
         assertThat(strings.get(0), equalTo("0"));
         assertThat(strings.get(strings.size() - 1), equalTo("z"));
         assertTrue(strings.indexOf("1") < strings.indexOf("9"));
         assertTrue(strings.indexOf("A") < strings.indexOf("Z"));
-        System.out.println("Avant : " + strings);
-        strings.sort(String.CASE_INSENSITIVE_ORDER);
-        System.out.println("Apres " + strings);
+
         //strings.add("C");
+    }
+
+    @Test
+    public void shouldSortNumbersAndStringsInLowerCase_UpperCase() {
+        strings.clear();
+        strings = Arrays.asList("12", "Az", "aA", "Ab", "zZ", "99");
+        strings.sort((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()));
+
+        assertThat(strings, equalTo(
+                Arrays.asList("99", "12", "Az", "aA", "Ab", "zZ")
+                        .stream()
+                        .sorted((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()))
+                        .collect(Collectors.toList())));
+
+        assertThat(strings, equalTo(Arrays.asList("zZ", "Az", "Ab", "aA", "99", "12")));
+        assertThat(strings, equalTo(
+                Arrays.asList("Az", "aA", "99", "Ab", "zZ", "12")
+                        .stream()
+                        .sorted((x, y) -> y.toUpperCase().compareTo(x.toUpperCase()))
+                        .collect(Collectors.toList())));
+
+        strings.sort(Comparator.comparing(String::toLowerCase));
+
+        assertThat(strings, equalTo(Arrays.asList("12", "99", "aA", "Ab", "Az", "zZ")));
+        assertThat(strings, equalTo(
+                Arrays.asList("aA", "99", "Ab", "Az", "12", "zZ")
+                        .stream()
+                        .sorted(Comparator.comparing(String::toLowerCase))
+                        .collect(Collectors.toList())));
+        assertThat(strings, equalTo(
+                Arrays.asList("12", "99", "aA", "Ab", "Az", "zZ")
+                        .stream()
+                        .sorted(Comparator.comparing(String::toUpperCase))
+                        .collect(Collectors.toList())));
+
+    }
+
+    @Test
+    public void shouldSortNumbersAndStringsInLowerCase_UpperCase_In_Parallel() {
+        strings.clear();
+        strings = Arrays.asList("12", "Az", "aA", "Ab", "zZ", "99");
+        strings.sort((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()));
+
+        assertThat(strings, equalTo(
+                Arrays.asList("99", "12", "Az", "aA", "Ab", "zZ")
+                        .stream()
+                        .sequential()
+                        .sorted((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()))
+                        .collect(Collectors.toList())));
+        assertThat(strings, equalTo(
+                Arrays.asList("99", "12", "Az", "aA", "Ab", "zZ")
+                        .stream()
+                        .parallel()
+                        .sorted((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()))
+                        .collect(Collectors.toList())));
+        assertThat(Arrays.asList("99", "12", "Az", "aA", "Ab", "zZ")
+                .stream()
+                .sequential()
+                .sorted((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()))
+                .collect(Collectors.toList()),
+                equalTo(Arrays.asList("99", "12", "Az", "aA", "Ab", "zZ")
+                        .stream()
+                        .parallel()
+                        .sorted((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()))
+                        .collect(Collectors.toList())));
     }
 
     @Test
@@ -91,9 +154,7 @@ public class Lists extends AbstractCollections {
         assertThat(stringList.get(1), equalTo("NARCISSE"));
         assertThat(stringList.get(2), equalTo("sagueu"));
         assertThat(stringList.get(3), equalTo("SOBNGWI"));
-        System.out.println();
-        stringList.forEach(x -> System.out.print(" " + x));
-        // Even if the sor have been perform by case sensitive, the min and max is performed in the naural order.
+        // Even if the sort  have been perform by case sensitive, the min and max is performed in the natural order.
         assertThat(Collections.min(stringList), equalTo("NARCISSE"));
         assertThat(Collections.max(stringList), equalTo("sagueu"));
 
@@ -171,7 +232,6 @@ public class Lists extends AbstractCollections {
                         put("Moe", 110);
                     }
                 };
-
 
 
         List<Integer> result = iqMap.keySet()
