@@ -616,7 +616,6 @@ public class TestsExam {
 
     @Test(expected = IllegalArgumentException.class)
     public void canNotMixAbsolutAndRelativePath() {
-        Callable<?> c = () -> { for ( int i = 0; i<10; i++){} return 10;};
         Paths.get(("sobngwi")).relativize(  Paths.get("/Users"));
     }
 }

@@ -16,6 +16,11 @@ public class ClothingPair<E extends ClothingItem & Sized & Colored> extends Pair
         && left.getColor().equals(right.getColor());
   }
 
+  public static <E extends Sized & Colored> boolean isMatched(E left, E right){
+    return left.getSize() == right.getSize()
+            && left.getColor().equals(right.getColor());
+  }
+
   public static <F extends ClothingItem & Sized & Colored>
   boolean match(F left, F right) {
     return left.getSize() == right.getSize()
