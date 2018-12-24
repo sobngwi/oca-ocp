@@ -3,7 +3,10 @@ package org.sobngwi.oca.jdbc;
 import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.sobngwi.oca.inheritance.Cat;
 
 import java.sql.*;
 import java.util.Deque;
@@ -15,6 +18,9 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 public class JdbcTests extends AbstractJDBC {
+
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -146,6 +152,22 @@ public class JdbcTests extends AbstractJDBC {
             assertThat(countRollBack, IsEqual.equalTo(5));
         } catch (Exception e) {
             fail();
+        }
+    }
+
+    @Test
+    public void statement_automatically_closes_the_open_resultSet_when_another_SQL_statement_is_run() throws SQLException {
+        // There are currently 100 rows in the table species before inserting a new row. What is the output of the following code?
+        thrown.expect(SQLException.class);
+        thrown.expectMessage("ResultSet not open. Operation 'next' not permitted.");
+
+        try (Connection conn = DriverManager.getConnection("jdbc:derby:zoo");
+             Statement stmt = conn.createStatement()) {
+
+            ResultSet rs = stmt.executeQuery("select count(*) from species");
+            int num = stmt.executeUpdate("INSERT INTO species VALUES (3, 'Ant', .05)");
+            rs.next();
+
         }
     }
 
@@ -387,5 +409,23 @@ public class JdbcTests extends AbstractJDBC {
         }
 
     }
+
+    @Test
+    public void absoluteDoesontRequiredSchroll() throws SQLException {
+
+       // Suppose that you have a table animal with three rows. The names in those rows are Anna, Betty, and Cat. What does the following output?
+        thrown.expect(java.sql.SQLException.class);
+        thrown.expectMessage("The 'absolute()' method is only allowed on scroll cursors.");
+
+        String sql = "select name from animal order by id";
+        try (Connection conn = DriverManager.getConnection("jdbc:derby:zoo");
+             Statement stmt = conn.createStatement();
+
+             ResultSet rs = stmt.executeQuery(sql)) {
+            rs.absolute(0);
+            rs.next();
+        }
+    }
+
 }
 

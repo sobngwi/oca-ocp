@@ -117,6 +117,13 @@ public class Lists extends AbstractCollections {
                         .parallel()
                         .sorted((x, y) -> y.toLowerCase().compareTo(x.toLowerCase()))
                         .collect(Collectors.toList())));
+
+        String[] values = { "123", "Abb", "100", "aab", "BAC", "001", "AAA" };
+        Arrays.sort(values, (a,b) -> b.toLowerCase().compareTo(a.toLowerCase()) );
+        //Le plus grand au plus petit des strings
+        // Ensuite le plus grand au plus petit des nombres
+        assertThat( Arrays.asList(values), equalTo(Arrays.asList( "BAC","Abb","aab","AAA","123", "100", "001")));
+
     }
 
     @Test
@@ -193,7 +200,7 @@ public class Lists extends AbstractCollections {
     }
 
     @Test
-    public void bynarySearchWorksOnlyOnScendingSortedCollections() {
+    public void bynarySearchWorksOnlyOnAScendingSortedCollections() {
 
         Comparator<Integer> c = (o1, o2) -> o1 - o2; // ascending
         List<Integer> list = Arrays.asList(5, 4, 7, 1);

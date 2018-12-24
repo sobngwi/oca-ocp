@@ -3,10 +3,7 @@ package org.sobngwi.oca.exam;
 import org.junit.Test;
 
 import java.io.*;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -28,7 +25,7 @@ import static org.junit.Assert.*;
 public class TestsExam {
 
     @Test
-    public void binarySearchOnNonIntsSortedListMustBeonAscendingMode() {
+    public void binarySearchOnNonIntsSortedListOnAscendingModeGivesUndefinedResult() {
 
         // What is the result of the following code?
         Comparator<Integer> c = (o1, o2) -> o2 - o1;
@@ -41,7 +38,18 @@ public class TestsExam {
     }
 
     @Test
-    public void binarySearchOnStringsSortedOnDesccendingMode() {
+    public void binarySearchOnIntsSortedListAscendingModeGivesCorrectResult() {
+        Comparator<Integer> c = Comparator.comparingInt(o -> o);
+        List<Integer> list1 = Arrays.asList(5, 4, 7, 1);
+        Collections.sort(list1, c);
+        int r = Collections.binarySearch(list1, 4);
+        assertTrue(r == 1);
+        r = Collections.binarySearch(list1, 1);
+        assertTrue(r == 0);
+    }
+
+    @Test
+    public void binarySearchOnStringsSortedOnDescendingMode() {
 
         List<String> list = new ArrayList<String>();
         list.add("ab");
@@ -172,6 +180,18 @@ public class TestsExam {
         assertThat(date.getMonth(), equalTo(Month.JANUARY));
         assertThat(date.getDayOfMonth(), equalTo(30));
 
+    }
+
+    @Test
+    public void periodDoesNotAllowchaining() {
+        // Only the year would be substract
+        LocalDateTime d = LocalDateTime.of(2015, 5, 10, 11, 22, 33);
+        Period p = Period.ofDays(1).ofYears(2);
+        d = d.minus(p);
+        DateTimeFormatter f = DateTimeFormatter.
+                ofLocalizedDateTime(FormatStyle.SHORT);
+        assertThat(f.format(d), equalTo(d.format(f)));
+        assertThat(f.format(d), equalTo("10/05/13 11:22"));
     }
 
     class FourLegged {
@@ -349,9 +369,22 @@ public class TestsExam {
         intsMaps.put(2, 1);
         intsMaps.put(3, 1);
         intsMaps.put(4, 1);
-        for ( int i : intsMaps.keySet() ) {
+        for (int i : intsMaps.keySet()) {
             intsMaps.remove(i);
         }
+    }
+
+    @Test
+    public void concurrentSkipListSetSupportsConcurrentModification() {
+
+        Set<Integer> concurrentSkipSet = new ConcurrentSkipListSet<>();
+        concurrentSkipSet.addAll(Arrays.asList(1, 2, 3, 4));
+
+        assertThat(concurrentSkipSet.size(), equalTo(4));
+        for (Integer i : concurrentSkipSet) {
+            concurrentSkipSet.remove(i);
+        }
+        assertThat(concurrentSkipSet.size(), equalTo(0));
     }
 
     @Test(expected = ConcurrentModificationException.class)
@@ -359,7 +392,7 @@ public class TestsExam {
         Map<Integer, Integer> intsMaps = new HashMap<>();
         intsMaps.put(1, 1);
         intsMaps.put(2, 1);
-        for ( int i : intsMaps.keySet() ) {
+        for (int i : intsMaps.keySet()) {
             intsMaps.remove(i);
         }
     }
@@ -386,55 +419,65 @@ public class TestsExam {
         map.put(2, 20);
         map.put(3, null);
 
-        map.merge(1, 3, (a,b) -> null);
-        map.merge(3, 3, (a,b) -> null);
+        map.merge(1, 3, (a, b) -> null);
+        map.merge(3, 3, (a, b) -> null);
         // key wwas there and value was there , function return null , then the key goes out
         // key was there value was null, the function returns null , then the value is the proposed value
         assertThat(map.toString(), containsString("{2=20, 3=3}"));
     }
 
-   static class WhatisIt {
-        static interface Furry { }
-        static class Chipmunk { }
-        static class FurryChipmunk implements Furry { }
+    static class WhatisIt {
+        static interface Furry {
+        }
+
+        static class Chipmunk {
+        }
+
+        static class FurryChipmunk implements Furry {
+        }
     }
+
     @Test
     public void code_involving_instanceof_does_not_compile_when_there_is_no_way_for_it_to_evaluate_to_true() {
         // ie Cast not possble => compile NOK
         WhatisIt.Chipmunk c = new WhatisIt.Chipmunk();
         int result = 0;
         if (c instanceof WhatisIt.Furry) result += 1;
-        if (c instanceof WhatisIt.Chipmunk) result +=2;
+        if (c instanceof WhatisIt.Chipmunk) result += 2;
         if (null instanceof WhatisIt.FurryChipmunk) result += 4;
         assertThat(result, equalTo(2));
 
     }
 
-     class Panda implements Comparable <Panda>{
+    class Panda implements Comparable<Panda> {
         String name;
-        Panda(String name) { this.name = name; }
 
-         @Override
-         public boolean equals(Object o) {
-             if (this == o) return true;
-             if (!(o instanceof Panda)) return false;
-             Panda panda = (Panda) o;
+        Panda(String name) {
+            this.name = name;
+        }
 
-             return name.equals(panda.name);
-         }
-         @Override
-         public int hashCode() {
-             return Objects.hash(name);
-         }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Panda)) return false;
+            Panda panda = (Panda) o;
+
+            return name.equals(panda.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
 
 
-         @Override
-         public int compareTo(Panda o) {
-             return name.length() - o.name.length();
-         }
-     }
+        @Override
+        public int compareTo(Panda o) {
+            return name.length() - o.name.length();
+        }
+    }
 
-     @Test
+    @Test
     public void Q97() {
         Set s = new HashSet<>();
         s.add(new Panda("Bao Bao"));
@@ -448,12 +491,12 @@ public class TestsExam {
     public void Q180() throws IOException {
 
         Path path1 = Paths.get("/lemur/habitat/./party.txt");
-        Path path2 =  Paths.get("/Users/sobngwi/intelliJ/codebase/certification/oca/src/test/java/org/sobngwi/oca/exam/q14.txt");//path1.subpath(1,4).toAbsolutePath();
+        Path path2 = Paths.get("/Users/sobngwi/intelliJ/codebase/certification/oca/src/test/java/org/sobngwi/oca/exam/q14.txt");//path1.subpath(1,4).toAbsolutePath();
         assertFalse(
-        Files.lines(path2)
-                .flatMap(p -> Stream.of(p.split(",")))
-                .filter(s -> s.trim().length()>0)
-                .allMatch(s -> s.length()>3));
+                Files.lines(path2)
+                        .flatMap(p -> Stream.of(p.split(",")))
+                        .filter(s -> s.trim().length() > 0)
+                        .allMatch(s -> s.length() > 3));
     }
 
     private static void magic(Stream<Integer> s) {
@@ -461,6 +504,7 @@ public class TestsExam {
                 .max(Comparator.comparingInt(x -> x));
         System.out.println(o.get());
     }
+
     @Test(expected = NoSuchElementException.class)
     public void Q156() {
         magic(Stream.of(5, 10));
@@ -474,7 +518,7 @@ public class TestsExam {
                 .sorted() // c2
                 .distinct() // c3
                 .forEach(System.out::print);// c4
-               // .sorted(); //can not be call after a terminal operation
+        // .sorted(); //can not be call after a terminal operation
     }
 
     @Test
@@ -489,17 +533,17 @@ public class TestsExam {
     @Test
     public void Q136() {
         ExecutorService service = Executors.newScheduledThreadPool(10);
-        LongStream.of(101,704,1126) // p1
+        LongStream.of(101, 704, 1126) // p1
                 .forEach((s) -> service.submit( // p2
-                        () -> System.out.print(2*s + " "))); // p3
+                        () -> System.out.print(2 * s + " "))); // p3
 
     }
 
-     static class WhichAnimal {
-         enum AnimalsInPark {
-             SQUIRREL, CHIPMUNK, SPARROW
-         }
-     }
+    static class WhichAnimal {
+        enum AnimalsInPark {
+            SQUIRREL, CHIPMUNK, SPARROW
+        }
+    }
 
     @Test
     public void Q132() {
@@ -529,7 +573,19 @@ public class TestsExam {
         Path path = Paths.get("src/test/java/org/sobngwi/oca/exam/q14.txt").getParent();
         Files.walk(path, 5, FileVisitOption.FOLLOW_LINKS) // b1
                 .filter(p -> p.resolve(p).getFileName().toString().endsWith(".txt")) // b2
-                .filter(p -> p.getNameCount()>4) ;// b3
+                .filter(p -> p.getNameCount() > 4);// b3
+    }
+
+    @Test
+    public void calling_resolve_with_an_absolute_path_as_a_parameter_returns_the_absolute_path() {
+        //Otherwise Concatene
+        // What is the output of the following code?
+        Path path1 = Paths.get("/pets/../cat.txt");
+        Path path2 = Paths.get("./dog.txt");
+
+        assertThat(path2.resolve(path1).toString(), equalTo("/pets/../cat.txt"));
+        assertThat(path1.resolve(path2).toString(), equalTo("/pets/../cat.txt/./dog.txt"));
+        assertThat(path2.resolve(path2).toString(), equalTo("./dog.txt/./dog.txt"));
     }
 
     @Test
@@ -539,15 +595,20 @@ public class TestsExam {
         q.add(new Integer(6));
 
         assertThat(q.size(), equalTo(2));
-        assertFalse(q.contains(6L) );
+        assertFalse(q.contains(6L));
     }
+
     /* Another singleton with static initialisation */
-    public static  class ExhibitionManager {
+    public static class ExhibitionManager {
         public final static ExhibitionManager exhibitionManager;
+
         static {
             exhibitionManager = new ExhibitionManager();
         }
-        private  ExhibitionManager() {}
+
+        private ExhibitionManager() {
+        }
+
         public static ExhibitionManager getExhibitionManager() {
             return new ExhibitionManager();
         }
@@ -555,20 +616,21 @@ public class TestsExam {
 
     @Test
     public void groupingBypredicate_groupingByCondition() {
-      //  What is the output of the following?
-                Stream<String> s = Stream.empty();
+        //  What is the output of the following?
+        Stream<String> s = Stream.empty();
         Stream<String> s2 = Stream.empty();
         Predicate<String> condition = b -> b.startsWith("c");
         Map<Boolean, List<String>> p = s.collect(
                 Collectors.partitioningBy(condition));
         Map<Boolean, List<String>> g = s2.collect(
-                Collectors.groupingBy(st ->st.startsWith("n")));
+                Collectors.groupingBy(st -> st.startsWith("n")));
         System.out.println(p + " " + g);
     }
 
-    enum Fruit{
+    enum Fruit {
         APPLE("red"), BANANA("yellow"), ORANGE("orange"), PLUM("purple");
-        private String color ;
+        private String color;
+
         Fruit(String color) {
             this.color = color;
         }
@@ -592,31 +654,140 @@ public class TestsExam {
 
     @Test(expected = NoSuchElementException.class)
     public void opt_orElse_optOrElseGet() {
-       // Which of the following fill in the blank on line 6 so that the program can compile and run without throwing an exception? (Choose all that apply.)
-         DoubleStream ds = DoubleStream.empty();
-         OptionalDouble opt = ds.findAny();
-         opt.orElse(0);
-         opt.orElseGet(() -> 0.0);
-         opt.getAsDouble();
+        // Which of the following fill in the blank on line 6 so that the program can compile and run without throwing an exception? (Choose all that apply.)
+        DoubleStream ds = DoubleStream.empty();
+        OptionalDouble opt = ds.findAny();
+        opt.orElse(0);
+        opt.orElseGet(() -> 0.0);
+        opt.getAsDouble();
     }
 
     @Test
     public void deserialisation_into_list_of_objects() throws FileNotFoundException, ClassNotFoundException {
-      //  Assuming Donkey is an existing class that properly implements the Serializable interface and dataFile refers to a valid File object that exists within the file system, what statements about the following code snippet are true? (Choose all that apply.)
+        //  Assuming Donkey is an existing class that properly implements the Serializable interface and dataFile refers to a valid File object that exists within the file system, what statements about the following code snippet are true? (Choose all that apply.)
         List<Object> donkeys = new ArrayList<>();
-         try (ObjectInputStream in = new ObjectInputStream(
+        try (ObjectInputStream in = new ObjectInputStream(
                 new BufferedInputStream(new FileInputStream(new File("xxx"))))) {
-                while(true) {
-                    Object object = in.readObject();
-                if(object instanceof WhichBrowser.Browser)
+            while (true) {
+                Object object = in.readObject();
+                if (object instanceof WhichBrowser.Browser)
                     donkeys.add(object);
-                 }
-             } catch (IOException e) { }
+            }
+        } catch (IOException e) {
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void canNotMixAbsolutAndRelativePath() {
-        Paths.get(("sobngwi")).relativize(  Paths.get("/Users"));
+        Paths.get(("sobngwi")).relativize(Paths.get("/Users"));
+    }
+
+
+    public class Sorted implements Comparable<Sorted>, Comparator<Sorted> {
+        private int num;
+        private String text;
+
+        Sorted(int n, String t) {
+            this.num = n;
+            this.text = t;
+        }
+
+        public String toString() {
+            return "" + num;
+        }
+
+        public int compareTo(Sorted s) {
+            return text.compareTo(s.text);
+        }
+
+        public int compare(Sorted s1, Sorted s2) {
+            return s1.num - s2.num;
+        }
+
+    }
+
+    @Test
+    public void calling_treeset_constructor_specify_the_comparator() {
+        // Q. 42 	What is the result of the following program?
+
+        Sorted s1 = new Sorted(88, "a");
+        Sorted s2 = new Sorted(55, "b");
+        TreeSet<Sorted> t1 = new TreeSet<>();
+        t1.add(s1);
+        t1.add(s2);
+        TreeSet<Sorted> t2 = new TreeSet<>(s1);
+        t2.add(s1);
+        t2.add(s2);
+
+        assertThat(t1.toString(), not(equalTo(t2.toString())));
+        assertThat(t1.toString(), equalTo("[88, 55]"));
+        assertThat(t2.toString(), equalTo("[55, 88]"));
+
+    }
+
+    @Test
+    public void createDirectory() throws IOException {
+        Path p = Paths.get(".");
+        Files.createDirectory(p.resolve("dddd"));
+        p = Paths.get("dddd");
+        Files.delete(p);
+    }
+
+    @Test
+    public void optional_get_is_for_Stream_while_optional_getAsLong_is_forOptionalLong() {
+        LongStream ls = LongStream.of(1, 2, 3);
+        OptionalLong opt = ls.map(n -> n * 10).filter(n -> n < 5).findFirst();
+        if (opt.isPresent()) System.out.println(opt.getAsLong());
+    }
+
+    @Test
+    public void thePathGetNameCountMethod() {
+        Path point = Paths.get(".");
+        Path other = Paths.get("/seal/sharp/food");
+
+        assertThat(point.getNameCount(), equalTo(1));
+        assertThat(other.getNameCount(), equalTo(3));
+
+        System.out.println(Runtime.getRuntime().availableProcessors());
+
+    }
+
+
+     class Outer {
+        private int x = 24;
+
+        public int getX() {
+            String message = "x is ";
+
+            class Inner {
+                private int x = Outer.this.x;
+
+                public void printX() {
+                    System.out.println(message + x);
+                }
+            }
+
+            Inner in = new Inner();
+            in.printX();
+            return x;
+        }
+    }
+
+    @Test
+    public void internClassInsideMethodInstantiationAndMethodCall() {
+        assertThat(new Outer().getX(), equalTo(24));
+    }
+
+    @Test
+    public void testCastOnCollectionNonGeneric() {
+        List stringList = new ArrayList();
+        stringList.add("one");
+        stringList.add("two");
+
+        for (Object s : stringList){
+            assertNotNull(s);
+            assertTrue( ((String) s).length() > 0);
+        }
     }
 }
 
