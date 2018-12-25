@@ -137,4 +137,33 @@ public class StudentTest extends Rules {
         assertThat(dummyStudents.get(6).getName(), equalTo("Jim"));
         assertThat(dummyStudents.get(7).getName(), equalTo("Alison"));
     }
+
+    @Test
+    public void sortStudentByHeightNullFirstByApi() {
+       Comparator<Student> sortStudentByHeightNullFirst =
+        Comparator.comparing(s-> s.getHeight(), Comparator.nullsFirst(Comparator.naturalOrder()));
+
+        dummyStudents.sort((sortStudentByHeightNullFirst));
+        assertThat(dummyStudents.get(0).getName(), equalTo("Toni"));
+        assertThat(dummyStudents.get(1).getName(), equalTo("Vanessa"));
+        assertThat(dummyStudents.get(2).getName(), equalTo("Sheila"));
+        assertThat(dummyStudents.get(3).getName(), equalTo("Alain"));
+        assertThat(dummyStudents.get(6).getName(), equalTo("Jim"));
+        assertThat(dummyStudents.get(7).getName(), equalTo("Alison"));
+
+    }
+
+    @Test
+    public void sortStudentByHeightNullLastByApi() {
+
+        Comparator<Student> sortStudentByHeightNullLast =
+                Comparator.comparing(s-> s.getHeight(), Comparator.nullsLast(Comparator.naturalOrder()));
+        dummyStudents.sort(sortStudentByHeightNullLast);
+
+        assertThat(dummyStudents.get(0).getName(), equalTo("Sheila"));
+        assertThat(dummyStudents.get(1).getName(), equalTo("Alain"));
+        assertThat(dummyStudents.get(6).getName(), equalTo("Toni"));
+        assertThat(dummyStudents.get(7).getName(), equalTo("Vanessa"));
+
+    }
 }
