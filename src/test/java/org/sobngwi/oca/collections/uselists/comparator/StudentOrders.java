@@ -11,24 +11,25 @@ public class StudentOrders {
         }
         System.out.println("---------------------------");
     }
-    
+
     public static void main(String[] args) {
-        List<Student> ls = getStudentsList() ;
+        List<Student> ls = getStudentsList();
         ls.sort(Student.getGradeComparator());
         showAll(ls);
         ls.sort(Student.getNameComparator());
         showAll(ls);
     }
 
-    public static List<Student> getStudentsList(){
+    public static List<Student> getStudentsList() {
         return Arrays.asList(
-        Student.fromNameGpaHeigthDebt("Fred", 3.2F, 72, 12_000),
+                Student.fromNameGpaHeigthDebt("Fred", 3.2F, 72, 12_000),
+                Student.fromNameGpaHeigthDebt("Alain", 3.6F, 70, 1_000),
                 Student.fromNameGpaHeigthDebt("Jim", 2.9F, 73, 4_000),
                 Student.fromNameGpaHeigthDebt("Sheila", 4.0F, 58, 2_000),
                 Student.fromNameGpaHeigthDebt("Alison", 3.6F, 73, 6_000),
                 Student.fromNameGpaHeigthDebt("Barney", 1.2F, 70, 21_000),
                 Student.fromNameAndGpa("Toni", 2.8F),
-        Student.fromNameAndGpa("Vanessa", 3.1F));
+                Student.fromNameAndGpa("Vanessa", 3.1F));
     }
 
     /*
