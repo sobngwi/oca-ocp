@@ -9,12 +9,50 @@ public class Student {
     private int height;
     private int debt;
 
-    public Student(String name, float gpa, int height, int debt) {
+    private Student(String name, float gpa, int height, int debt) {
         this.name = name;
         this.gpa = gpa;
         this.height = height;
         this.debt = debt;
     }
+
+    private Student(String name, float gpa){
+        this.name = name;
+        this.gpa = gpa;
+    }
+    public static Student fromNameGpaHeigthDebt(String name, float gpa, int height, int debt){
+        return new Student(name, gpa, height, debt );
+    }
+
+    public static Student fromNameAndGpa(String name, float gpa) {
+        return new Student(name, gpa);
+    }
+
+
+    public static Comparator<Student> getGradeComparator() {
+        return gradeComparator;
+    }
+    public static Comparator<Student> getNameComparator()  { return nameComparator; }
+
+
+    private static class GradeComparator
+            implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            return Float.compare(o1.getGpa(), o2.getGpa());
+        }
+    }
+
+    private static class NameComparator
+            implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            return o1.name.compareTo(o2.name);
+        }
+    }
+
+    private static final Comparator<Student> gradeComparator = new GradeComparator();
+    private static final Comparator<Student> nameComparator = new NameComparator();
 
     public String getName() {
         return name;
@@ -38,31 +76,4 @@ public class Student {
                 + ", height=" + height + ", debt=" + debt + '}';
     }
 
-    private static final Comparator<Student> gradeComparator = new GradeComparator();
-    private static final Comparator<Student> nameComparator = new NameComparator();
-    
-    public static Comparator<Student> getGradeComparator() {
-        return gradeComparator;
-    }
-    
-    private static class GradeComparator 
-            implements Comparator<Student> {
-        @Override
-        public int compare(Student o1, Student o2) {
-            System.out.println("Nested StudentGradeComparator");
-            return Float.compare(o1.getGpa(), o2.getGpa());
-        }
-    }
-    
-    public static Comparator<Student> getNameComparator() {
-        return nameComparator;
-    }
-    
-    private static class NameComparator
-            implements Comparator<Student> {
-        @Override
-        public int compare(Student o1, Student o2) {
-            return o1.name.compareTo(o2.name);
-        }
-    }
 }
