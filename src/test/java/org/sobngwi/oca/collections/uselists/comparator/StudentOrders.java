@@ -1,8 +1,9 @@
 package org.sobngwi.oca.collections.uselists.comparator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 public class StudentOrders {
     public static void showAll(List<Student> ls) {
@@ -32,6 +33,14 @@ public class StudentOrders {
                 Student.fromNameAndGpa("Vanessa", 3.1F));
     }
 
+    public static Map<String, List<Student>>  getStudentsMap( ){ ;
+        return  getStudentsList().stream().collect(Collectors.groupingByConcurrent(s -> s.getName()));
+    }
+
+   /* public static Map<String, List<Student>>  getStudentsMapConsTructByhand( ) {
+        Map<String, List<Student>> maps = new HashMap<>();
+        return
+    }*/
     /*
     new ArrayList<>(Arrays.asList(
                 Student.fromNameGpaHeigthDebt("Fred", 3.2F, 72, 12_000),

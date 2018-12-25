@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.sobngwi.oca.exceptions.Rules;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
@@ -165,5 +162,51 @@ public class StudentTest extends Rules {
         assertThat(dummyStudents.get(6).getName(), equalTo("Toni"));
         assertThat(dummyStudents.get(7).getName(), equalTo("Vanessa"));
 
+    }
+
+    @Test
+    public void comparingMapByvalues() {
+        Map<String, Integer> stringIntegerMap = new HashMap<>();
+        stringIntegerMap.put("Jim", 12);
+        stringIntegerMap.put("Belinda", 12);
+        stringIntegerMap.put("Sheila", 12);
+        stringIntegerMap.put("Alain", 10);
+        stringIntegerMap.put("Alice", 10);
+        stringIntegerMap.put("Susan", 3);
+        stringIntegerMap.put("Fred", 9);
+
+        Comparator <Map.Entry<String, Integer>> comparByValues =
+        Map.Entry.<String, Integer>comparingByValue().reversed().thenComparing(Map.Entry.comparingByKey());
+
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(stringIntegerMap.entrySet());
+
+        entryList.sort( comparByValues);
+
+        assertThat(entryList.get(0).getKey(), equalTo("Belinda"));
+        assertThat(entryList.get(1).getKey(), equalTo("Jim"));
+        assertThat(entryList.get(2).getKey(), equalTo("Sheila"));
+        assertThat(entryList.get(3).getKey(), equalTo("Alain"));
+        assertThat(entryList.get(4).getKey(), equalTo("Alice"));
+        assertThat(entryList.get(5).getKey(), equalTo("Fred"));
+        assertThat(entryList.get(6).getKey(), equalTo("Susan"));
+
+        SortedSet<Map.Entry<String, Integer>> sortedEntries = new TreeSet<>(comparByValues);
+        sortedEntries.addAll(stringIntegerMap.entrySet());
+
+        assertThat(sortedEntries.first().getKey(), equalTo("Belinda"));
+        assertThat(sortedEntries.last().getKey(), equalTo("Susan"));
+
+    }
+
+    static <K,V extends Comparable<? super V>>
+    SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
+        SortedSet<Map.Entry<K,V>> sortedEntries = new TreeSet<Map.Entry<K,V>>(
+                (e1, e2) -> {
+                    int res = e1.getValue().compareTo(e2.getValue());
+                    return res != 0 ? res : 1;
+                }
+        );
+        sortedEntries.addAll(map.entrySet());
+        return sortedEntries;
     }
 }
