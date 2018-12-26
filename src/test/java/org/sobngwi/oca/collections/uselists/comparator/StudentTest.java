@@ -1,15 +1,13 @@
 package org.sobngwi.oca.collections.uselists.comparator;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sobngwi.oca.exceptions.Rules;
 
 import java.util.*;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class StudentTest extends Rules {
 
